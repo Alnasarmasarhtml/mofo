@@ -67,9 +67,22 @@ export class Scroller {
           this.gestureStepped = false;
           this.gestureStart = now;
           this.gestureNative = !!(this.enabled && this.consume && this.consume(Math.sign(dy)));
+          this.edgeAcc = 0;
         }
         if (this.gestureNative) {
           this.lastWheelAt = now;
+          // the page scrolled itself to its edge and the hand keeps pushing the same way: that push means "leave"
+          if (this.consume && !this.consume(Math.sign(dy))) {
+            this.edgeAcc = (Math.sign(dy) === Math.sign(this.edgeAcc) ? this.edgeAcc : 0) + dy;
+            if (Math.abs(this.edgeAcc) > 150) {
+              this.gestureNative = false;
+              this.gestureStepped = true;
+              this.lockUntil = 0;
+              this.step(Math.sign(dy));
+              this.edgeAcc = 0;
+            }
+          } else this.edgeAcc = 0;
+          if (!this.gestureNative) e.preventDefault();
           return;
         }
         e.preventDefault();
@@ -94,6 +107,8 @@ export class Scroller {
     let ty = null;
     let tStart = 0;
     let tNative = null;
+    let tEdge = 0;
+    let tLast = 0;
     addEventListener(
       'touchstart',
       (e) => {
@@ -109,8 +124,19 @@ export class Scroller {
         if (ty === null || !this.enabled) return;
         const y = e.touches[0].clientY;
         const d = ty - y;
-        if (tNative === null && Math.abs(tStart - y) > 4) tNative = !!(this.consume && this.consume(Math.sign(tStart - y)));
-        if (tNative) return;
+        if (tNative === null && Math.abs(tStart - y) > 4) {
+          tNative = !!(this.consume && this.consume(Math.sign(tStart - y)));
+          tEdge = 0;
+          tLast = y;
+        }
+        if (tNative) {
+          // same on touch: once the page is at its edge, keep dragging past it to leave
+          const step = tLast - y;
+          tLast = y;
+          if (this.consume && !this.consume(Math.sign(step || tStart - y))) tEdge += step;
+          else tEdge = 0;
+          return;
+        }
         ty = y;
         this.stretch = Math.max(-0.22, Math.min(0.22, this.stretch + d * 0.0022));
         if (e.cancelable) e.preventDefault();
@@ -121,7 +147,13 @@ export class Scroller {
       if (ty === null) return;
       const total = tStart - ty;
       ty = null;
-      if (tNative) return;
+      if (tNative) {
+        if (Math.abs(tEdge) > 70) {
+          this.lockUntil = 0;
+          this.step(Math.sign(tEdge));
+        }
+        return;
+      }
       if (Math.abs(total) > 38) this.step(Math.sign(total));
     });
 

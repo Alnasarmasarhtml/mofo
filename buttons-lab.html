@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · button options</title>
+<style>
+@font-face { font-family: 'Archivo'; src: url('/fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; }
+@font-face { font-family: 'Martian Mono'; src: url('/fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; }
+:root { --navy: #0B091F; --lav: #EAEDFF; --mono: 'Martian Mono', monospace; --sans: 'Archivo', sans-serif; --ease: cubic-bezier(.2, .7, .1, 1); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--navy); color: var(--lav); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+a, button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: none; }
+.wrap { max-width: 1500px; margin: 0 auto; padding: 56px 40px 80px; }
+h1 { font-weight: 900; font-stretch: 125%; font-size: 64px; line-height: .9; letter-spacing: -.03em; margin: 0 0 10px; text-transform: uppercase; }
+.lede { font: 500 12px/1.6 var(--mono); letter-spacing: .06em; max-width: 70ch; margin: 0 0 48px; }
+.opt { border-top: 1px solid var(--lav); padding: 34px 0 44px; display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 1fr); gap: 40px; }
+.opt-h b { display: inline-grid; place-items: center; min-width: 30px; height: 24px; background: var(--lav); color: var(--navy); font: 700 12px/1 var(--mono); margin-bottom: 14px; }
+.opt-h h2 { margin: 0 0 10px; font-weight: 900; font-stretch: 125%; font-size: 30px; letter-spacing: -.02em; text-transform: uppercase; line-height: .95; }
+.opt-h p { margin: 0; font-size: 15px; line-height: 1.5; max-width: 36ch; }
+.stage { display: grid; gap: 26px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.lbl { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: 1; margin-bottom: 10px; }
+.lbl i { font-style: normal; border: 1px solid var(--lav); padding: 3px 5px 2px; margin-left: 8px; }
+.light { background: var(--lav); color: var(--navy); padding: 22px; }
+.light .lbl i { border-color: var(--navy); }
+
+/* ================================================================ A · price tag (the chart's own axis label) */
+.tag {
+  --c: var(--lav); --t: var(--navy);
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 26px;
+  color: var(--t);
+  font: 600 13px/1 var(--mono); letter-spacing: .02em; font-variant-numeric: tabular-nums;
+  transition: transform .35s var(--ease);
+}
+.tag::before { content: ''; position: absolute; inset: 0; background: var(--c); clip-path: polygon(14px 0, 100% 0, 100% 100%, 14px 100%, 0 50%); z-index: -2; }
+.tag .fill { display: none; }
+.tag .px { font-weight: 400; border-left: 1px solid currentColor; padding-left: 10px; }
+/* the dashed price line that runs out of the point */
+.tag::after { content: ''; position: absolute; right: 100%; top: 50%; width: 0; height: 1px; background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 8px); transition: width .45s var(--ease); }
+.tag:hover, .tag.is-hover { transform: translateX(-4px); }
+.tag:hover::after, .tag.is-hover::after { width: 70px; }
+/* outlined tag: a lavender shape with a navy one 1px inside it; the inside wipes away on hover */
+.tag-o { --t: var(--lav); }
+.tag-o .fill { display: block; position: absolute; inset: 1.5px 1.5px 1.5px 2.2px; background: var(--navy); clip-path: polygon(13px 0, 100% 0, 100% 100%, 13px 100%, 0 50%); z-index: -1; transition: transform .4s var(--ease); transform-origin: right; }
+.tag-o:hover .fill, .tag-o.is-hover .fill { transform: scaleX(0); }
+.tag-o:hover, .tag-o.is-hover { color: var(--navy); }
+.light .tag { --c: var(--navy); --t: var(--lav); }
+.light .tag-o { --t: var(--navy); }
+.light .tag-o .fill { background: var(--lav); }
+.light .tag-o:hover, .light .tag-o.is-hover { color: var(--lav); }
+
+/* ================================================================ B · candle (body is the label, wicks grow on hover) */
+.cndl {
+  --c: var(--lav); --t: var(--navy);
+  position: relative; display: inline-grid; place-items: center; height: 42px; padding: 0 20px; margin: 14px 0;
+  background: var(--c); color: var(--t);
+  font: 800 15px/1 var(--sans); font-stretch: 112%; letter-spacing: -.005em;
+  transition: height .35s var(--ease), margin .35s var(--ease);
+}
+.cndl::before, .cndl::after { content: ''; position: absolute; left: 50%; width: 1.5px; background: var(--c); transform: translateX(-50%); transition: height .35s var(--ease); }
+.cndl::before { bottom: 100%; height: 9px; }
+.cndl::after { top: 100%; height: 6px; }
+.cndl-o { background: transparent; color: var(--c); box-shadow: inset 0 0 0 1.5px var(--c); }
+.cndl:hover::before, .cndl.is-hover::before { height: 18px; }
+.cndl:hover::after, .cndl.is-hover::after { height: 3px; }
+.cndl:hover, .cndl.is-hover { height: 50px; margin: 10px 0 6px; }
+.cndl-o:hover, .cndl-o.is-hover { background: var(--c); color: var(--navy); }
+.light .cndl { --c: var(--navy); --t: var(--lav); }
+.light .cndl-o:hover, .light .cndl-o.is-hover { color: var(--lav); }
+
+/* ================================================================ C · the logo's eyes (a plain block that looks at you) */
+.eyes {
+  --c: var(--lav); --t: var(--navy);
+  position: relative; display: inline-flex; align-items: center; gap: 14px; height: 44px; padding: 0 16px 0 20px;
+  background: var(--c); color: var(--t);
+  font: 800 16px/1 var(--sans); font-stretch: 118%; letter-spacing: -.01em;
+  transition: gap .35s var(--ease);
+}
+.eyes .e { display: inline-flex; gap: 3px; transition: transform .35s var(--ease); }
+.eyes .e i { width: 6px; height: 13px; background: currentColor; transform: skewX(-18deg); border-radius: 1px; transform-origin: 50% 100%; animation: blinkE 4.8s infinite; }
+.eyes .e i + i { animation-delay: .02s; }
+@keyframes blinkE { 0%, 93%, 100% { transform: skewX(-18deg) scaleY(1); } 95% { transform: skewX(-18deg) scaleY(.12); } }
+.eyes-o { background: transparent; color: var(--c); box-shadow: inset 0 0 0 1.5px var(--c); }
+.eyes:hover .e, .eyes.is-hover .e { transform: translateX(4px); }
+.eyes:hover .e i, .eyes.is-hover .e i { height: 15px; }
+.eyes-o:hover, .eyes-o.is-hover { background: var(--c); color: var(--navy); }
+.eyes-sq { width: 44px; padding: 0; justify-content: center; }
+.light .eyes { --c: var(--navy); --t: var(--lav); }
+.light .eyes-o:hover, .light .eyes-o.is-hover { color: var(--lav); }
+
+/* ================================================================ D · type only, with a gaussian underline that rises */
+.bell {
+  position: relative; display: inline-flex; align-items: baseline; gap: 10px; padding: 6px 0 16px;
+  font: 900 22px/1 var(--sans); font-stretch: 125%; letter-spacing: -.02em; color: var(--lav);
+}
+.bell svg { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 16px; overflow: visible; }
+.bell path { fill: none; stroke: currentColor; stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: d .5s var(--ease); }
+.bell .pk { fill: currentColor; transition: cy .5s var(--ease), opacity .3s; opacity: 0; }
+.bell:hover path, .bell.is-hover path { d: path('M0,13 C18,13 28,12.6 36,9.5 C42,6 45,1 50,1 C55,1 58,6 64,9.5 C72,12.6 82,13 100,13'); }
+.bell:hover .pk, .bell.is-hover .pk { opacity: 1; cy: 1; }
+.bell .n { font: 700 15px/1 var(--mono); }
+.bell-sm { font-size: 17px; }
+.light .bell { color: var(--navy); }
+.sep { width: 1px; height: 26px; background: currentColor; opacity: 1; margin: 0 10px; }
+
+.pick { margin-top: 56px; border-top: 1px solid var(--lav); padding-top: 26px; font: 500 12px/1.7 var(--mono); letter-spacing: .05em; max-width: 90ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Buttons</h1>
+  <p class="lede">four directions for every button on mindoverfomo.tools. each one takes its shape from something mofo owns: the chart's price label, a candle, the logo's eyes, the gaussian curve. hover them. the second row of each shows the hover state frozen.</p>
+
+  <!-- A -->
+  <section class="opt">
+    <div class="opt-h"><b>A</b><h2>price tag</h2><p>the label tradingview puts on the price axis. the point faces the chart, the price rides along. on hover a dashed price line runs out of the point.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="tag" href="#"><span>buy $mofo</span><span class="px">$0.00042</span></a>
+        <a class="tag tag-o" href="#"><i class="fill"></i><span>get the extension</span></a>
+        <a class="tag tag-o" href="#"><i class="fill"></i><span>x</span></a>
+        <a class="tag tag-o" href="#"><i class="fill"></i><span>telegram</span></a>
+      </div></div>
+      <div><div class="lbl">hover</div><div class="row">
+        <a class="tag is-hover" href="#"><span>buy $mofo</span><span class="px">$0.00042</span></a>
+        <a class="tag tag-o is-hover" href="#"><i class="fill"></i><span>get the extension</span></a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page <i>lavender</i></div><div class="row">
+        <a class="tag" href="#"><span>buy $mofo</span><span class="px">$0.00042</span></a>
+        <a class="tag tag-o" href="#"><i class="fill"></i><span>get the extension</span></a>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="opt">
+    <div class="opt-h"><b>B</b><h2>candle</h2><p>every button is a candle. the solid one is a green candle, the outlined ones are red. on hover the body stretches and the top wick grows, a small pump.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="cndl" href="#">buy $mofo</a>
+        <a class="cndl cndl-o" href="#">get the extension</a>
+        <a class="cndl cndl-o" href="#">x</a>
+        <a class="cndl cndl-o" href="#">telegram</a>
+      </div></div>
+      <div><div class="lbl">hover</div><div class="row">
+        <a class="cndl is-hover" href="#">buy $mofo</a>
+        <a class="cndl cndl-o is-hover" href="#">get the extension</a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page <i>lavender</i></div><div class="row">
+        <a class="cndl" href="#">buy $mofo</a>
+        <a class="cndl cndl-o" href="#">get the extension</a>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="opt">
+    <div class="opt-h"><b>C</b><h2>the logo's eyes</h2><p>a plain square block, no cut corners, the label in the headline font. the logo's two slanted eyes replace the arrow. they blink now and then, and step toward the click on hover.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="eyes" href="#">buy $mofo<span class="e"><i></i><i></i></span></a>
+        <a class="eyes eyes-o" href="#">get the extension<span class="e"><i></i><i></i></span></a>
+        <a class="eyes eyes-o eyes-sq" href="#" aria-label="x">x</a>
+        <a class="eyes eyes-o" href="#">telegram</a>
+      </div></div>
+      <div><div class="lbl">hover</div><div class="row">
+        <a class="eyes is-hover" href="#">buy $mofo<span class="e"><i></i><i></i></span></a>
+        <a class="eyes eyes-o is-hover" href="#">get the extension<span class="e"><i></i><i></i></span></a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page <i>lavender</i></div><div class="row">
+        <a class="eyes" href="#">buy $mofo<span class="e"><i></i><i></i></span></a>
+        <a class="eyes eyes-o" href="#">get the extension<span class="e"><i></i><i></i></span></a>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- D -->
+  <section class="opt">
+    <div class="opt-h"><b>D</b><h2>type only</h2><p>no boxes. the words in the headline font, underlined by a flat line that rises into a gaussian bell on hover, a dot riding to the top. the most expensive-looking of the four, the least button-looking.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="bell" href="#">buy $mofo<span class="n">↗</span><svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+        <span class="sep"></span>
+        <a class="bell bell-sm" href="#">get the extension<svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+        <a class="bell bell-sm" href="#">x<svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+        <a class="bell bell-sm" href="#">telegram<svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+      </div></div>
+      <div><div class="lbl">hover</div><div class="row">
+        <a class="bell is-hover" href="#">buy $mofo<span class="n">↗</span><svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page <i>lavender</i></div><div class="row">
+        <a class="bell" href="#">buy $mofo<span class="n">↗</span><svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+        <span class="sep"></span>
+        <a class="bell bell-sm" href="#">get the extension<svg viewBox="0 0 100 14" preserveAspectRatio="none"><path d="M0,13 C18,13 28,13 36,13 C42,13 46,13 50,13 C54,13 58,13 64,13 C72,13 82,13 100,13"/><circle class="pk" cx="50" cy="13" r="2.2"/></svg></a>
+      </div></div>
+    </div>
+  </section>
+
+  <p class="pick">tell me a letter, or mix them: e.g. C for the main buttons and D for the small links.</p>
+</div>
+<script>
+// stop the demo links from jumping to the top
+document.querySelectorAll('a[href="#"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+</script>
+</body>
+</html>

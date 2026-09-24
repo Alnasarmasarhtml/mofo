@@ -2,6 +2,7 @@
 // the M O F O rail, the heat readout, trailer subtitles and the chart-crosshair cursor.
 import gsap from 'gsap';
 import { CONFIG } from '../config.js';
+import { initAura } from './aura.js';
 
 const NOISE = '▲▼$%#/<>+×'.split('');
 const SUBS = ["every chart looks like the one that's gonna run", 'gaussian channel, 4 poles, 144 bars', 'your thumb is already on buy', "who's actually holding it", '', ''];
@@ -135,7 +136,7 @@ export class UI {
 
   // ---------------------------------------------------------------- headline splitting
   _splitWords() {
-    for (const h of document.querySelectorAll('.word')) {
+    for (const h of document.querySelectorAll('.word:not(.word-ball)')) {
       const w = h.dataset.word || h.textContent.trim();
       h.textContent = '';
       h.setAttribute('aria-label', w);
@@ -255,6 +256,7 @@ export class UI {
       { root: doc, threshold: 0.12 }
     );
     items.forEach((el) => io.observe(el));
+    initAura(doc);
     const img = document.getElementById('chartShot');
     const tabs = [...doc.querySelectorAll('.seg button')];
     for (const t of tabs) {
@@ -296,7 +298,7 @@ export class UI {
   _leave(sec) {
     gsap.killTweensOf(sec.querySelectorAll('*'));
     const chars = sec.querySelectorAll('.ch');
-    const rest = sec.querySelectorAll('.idx, .word-sub, .body, .tags li, .heatbar, .rules > div, .fine, .card, .full .fw, .final-row, .final-fine, .doc-cta, .doc-down, .blk');
+    const rest = sec.querySelectorAll('.idx, .word-sub, .word-ball img, .body, .tags li, .heatbar, .rules > div, .fine, .card, .full .fw, .final-row, .final-fine, .doc-cta, .doc-down, .blk');
     gsap.to(chars, { opacity: 0, yPercent: -40, '--w': 62, duration: 0.32, stagger: 0.025, ease: 'power3.in' });
     gsap.to(rest, {
       opacity: 0,
@@ -334,6 +336,8 @@ export class UI {
         });
       }
     });
+    const ball = sec.querySelector('.word-ball img');
+    if (ball) gsap.fromTo(ball, { opacity: 0, scale: 0.2, rotate: -40 }, { opacity: 1, scale: 1, rotate: 0, duration: 1.1, delay: d + 0.1, ease: 'back.out(1.7)' });
     const sub = sec.querySelector('.word-sub');
     if (sub) gsap.fromTo(sub, { opacity: 0, yPercent: 60 }, { opacity: 1, yPercent: 0, duration: 1, delay: d + 0.05 + chars.length * 0.07, ease: 'expo.out' });
     const body = sec.querySelectorAll('.body, .fine');
