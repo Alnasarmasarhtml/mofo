@@ -12,6 +12,7 @@ import { buildPaths } from './world/world.js';
 import { buildSets } from './world/sets.js';
 import { UI } from './ui/ui.js';
 import { Intro } from './world/intro.js';
+import { initButtons3D } from './ui/buttons3d.js';
 import './style.css';
 
 const PAGES = 6;
@@ -173,6 +174,9 @@ async function boot() {
   }
   post.render(0.016);
   ui.loaderProgress(1);
+
+  // desktop: live 3D bubble buttons; phones keep the CSS jelly keys
+  initButtons3D();
 
   // ---------------------------------------------------------------- intro
   const orbRest = new THREE.Vector3();
