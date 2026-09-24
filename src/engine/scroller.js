@@ -56,18 +56,24 @@ export class Scroller {
     addEventListener(
       'wheel',
       (e) => {
-        e.preventDefault();
-        if (!this.enabled) return;
         const now = performance.now();
         let dy = e.deltaY;
         if (e.deltaMode === 1) dy *= 36;
         if (e.deltaMode === 2) dy *= innerHeight;
         // A pause starts a new gesture. Inside one gesture only one page step, unless the push keeps going hard.
+        // A page with its own scroll (the tool page) can claim a whole gesture; then the browser scrolls it natively.
         if (now - this.lastWheelAt > 220) {
           this.gestureAcc = 0;
           this.gestureStepped = false;
           this.gestureStart = now;
+          this.gestureNative = !!(this.enabled && this.consume && this.consume(Math.sign(dy)));
         }
+        if (this.gestureNative) {
+          this.lastWheelAt = now;
+          return;
+        }
+        e.preventDefault();
+        if (!this.enabled) return;
         this.lastWheelAt = now;
         this.gestureAcc += dy;
         this.stretch = Math.max(-0.18, Math.min(0.18, this.stretch + dy * 0.0009));
@@ -87,11 +93,13 @@ export class Scroller {
 
     let ty = null;
     let tStart = 0;
+    let tNative = null;
     addEventListener(
       'touchstart',
       (e) => {
         ty = e.touches[0].clientY;
         tStart = ty;
+        tNative = null;
       },
       { passive: true }
     );
@@ -101,6 +109,8 @@ export class Scroller {
         if (ty === null || !this.enabled) return;
         const y = e.touches[0].clientY;
         const d = ty - y;
+        if (tNative === null && Math.abs(tStart - y) > 4) tNative = !!(this.consume && this.consume(Math.sign(tStart - y)));
+        if (tNative) return;
         ty = y;
         this.stretch = Math.max(-0.22, Math.min(0.22, this.stretch + d * 0.0022));
         if (e.cancelable) e.preventDefault();
@@ -111,11 +121,18 @@ export class Scroller {
       if (ty === null) return;
       const total = tStart - ty;
       ty = null;
+      if (tNative) return;
       if (Math.abs(total) > 38) this.step(Math.sign(total));
     });
 
     addEventListener('keydown', (e) => {
       if (!this.enabled) return;
+      const dir = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
+      if (dir && this.consume && this.consume(dir) && this.onKeyScroll) {
+        e.preventDefault();
+        this.onKeyScroll(dir);
+        return;
+      }
       if (['ArrowDown', 'PageDown', ' ', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         this.lockUntil = 0;

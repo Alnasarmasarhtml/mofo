@@ -27,6 +27,8 @@ export function buildPaths(slots, extra = {}) {
     { v: 3, pos: add(S, -6.5, 1.2, 28), target: add(S, -9.2, 0.2, 0), fov: 38, fovPortrait: 30, roll: 0 },
     // 4 · the pull-back: the whole word in a row, high in frame, the eclipse behind it
     { v: 4, pos: v(0, 2.2, 90), target: v(0, -5.2, 0), fov: 31, fovPortrait: 44, roll: 0 },
+    // 5 · the tool: rise over the word and turn to the eclipse, so the scene is a calm backdrop for the page
+    { v: 5, pos: v(-20, 30, 60), target: v(-85, 22, -420), fov: 42, roll: 0.02 },
   ]);
   const top = extra.pumpTop || add(F, -2.2, 4.4, 7.2);
   const orb = new KeyPath([
@@ -39,6 +41,7 @@ export function buildPaths(slots, extra = {}) {
     { v: 2.6, pos: add(S, 0, 0, 3), target: v(0, 0, 0), fov: 3.8 },
     { v: 3, pos: S.clone(), target: v(0, 0, 0), fov: CAP / 2 },
     { v: 4, pos: S.clone(), target: v(0, 0, 0), fov: CAP / 2 },
+    { v: 5, pos: S.clone(), target: v(0, 0, 0), fov: CAP / 2 },
   ]);
   // Portrait: the same flight, but every page shot pulls back and frames its subject in the top half, above the copy
   const P = {
@@ -47,9 +50,10 @@ export function buildPaths(slots, extra = {}) {
     2: { pos: add(F, 3, -3, 36), target: add(F, -1, -6.4, 0), fov: 58, roll: -0.03 },
     3: { pos: add(S, 0, -1.5, 35), target: add(S, 0, -7.8, 0), fov: 58, roll: 0 },
     4: { pos: v(0, 2, 122), target: v(0, -17.5, 0), fov: 58, roll: 0 },
+    5: { pos: v(0, 30, 90), target: v(0, 46, -420), fov: 64, roll: 0 },
   };
   const camP = new KeyPath(cam.keys.map((k) => (Number.isInteger(k.v) ? Object.assign({ v: k.v }, P[k.v]) : Object.assign({}, k, { fov: k.fov + 14 }))));
-  const OP = { 0: add(M, -2.6, -4.6, 11), 1: add(O, 3.2, -4.6, 9), 2: add(F, 4.2, 5.2, 6), 3: S.clone(), 4: S.clone() };
+  const OP = { 0: add(M, -2.6, -4.6, 11), 1: add(O, 3.2, -4.6, 9), 2: add(F, 4.2, 5.2, 6), 3: S.clone(), 4: S.clone(), 5: S.clone() };
   const orbP = new KeyPath(orb.keys.map((k) => (OP[k.v] ? Object.assign({}, k, { pos: OP[k.v] }) : k)));
   return { cam, orb, camP, orbP };
 }

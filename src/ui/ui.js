@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import { CONFIG } from '../config.js';
 
 const NOISE = '▲▼$%#/<>+×'.split('');
-const SUBS = ["every chart looks like the one that's gonna run", 'gaussian channel, 4 poles, 144 bars', 'your thumb is already on buy', "who's actually holding it", ''];
+const SUBS = ["every chart looks like the one that's gonna run", 'gaussian channel, 4 poles, 144 bars', 'your thumb is already on buy', "who's actually holding it", '', ''];
 const HEAT = ['CALM', 'WARM', 'HOT', 'EXTREME'];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -31,6 +31,7 @@ export class UI {
     this._links();
     this._nav();
     this._cursor();
+    this._doc();
     this._sizeLoader();
     addEventListener('resize', () => this._sizeLoader());
     this._loaderLoop();
@@ -138,14 +139,21 @@ export class UI {
       const w = h.dataset.word || h.textContent.trim();
       h.textContent = '';
       h.setAttribute('aria-label', w);
-      for (const ch of w) {
-        const s = document.createElement('span');
-        s.className = 'ch';
-        s.textContent = ch;
-        s.dataset.c = ch;
-        s.setAttribute('aria-hidden', 'true');
-        h.appendChild(s);
-      }
+      // each word is an unbreakable group of letter spans; the real space between words is where a narrow screen may break
+      w.split(' ').forEach((word, wi) => {
+        if (wi) h.appendChild(document.createTextNode(' '));
+        const g = document.createElement('span');
+        g.className = 'wd';
+        for (const ch of word) {
+          const s = document.createElement('span');
+          s.className = 'ch';
+          s.textContent = ch;
+          s.dataset.c = ch;
+          s.setAttribute('aria-hidden', 'true');
+          g.appendChild(s);
+        }
+        h.appendChild(g);
+      });
     }
   }
 
@@ -225,9 +233,52 @@ export class UI {
     requestAnimationFrame(tick);
   }
 
+  // ---------------------------------------------------------------- the tool page: its own scroll, reveals, chart switch
+  _doc() {
+    const doc = document.getElementById('doc');
+    if (!doc) return;
+    this.doc = doc;
+    const items = doc.querySelectorAll('.blk-h, .feat-copy, .shot, .spec > div, .pros-grid li, .steps li, .doc-foot > *');
+    items.forEach((el) => el.classList.add('reveal'));
+    doc.addEventListener('scroll', () => this.root.classList.toggle('docked', this.cur === 5 && doc.scrollTop > innerHeight * 0.6), { passive: true });
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          // siblings in the same row come in one after another
+          const sib = [...e.target.parentElement.children].filter((c) => c.classList.contains('reveal'));
+          e.target.style.transitionDelay = Math.min(6, sib.indexOf(e.target)) * 70 + 'ms';
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      },
+      { root: doc, threshold: 0.12 }
+    );
+    items.forEach((el) => io.observe(el));
+    const img = document.getElementById('chartShot');
+    const tabs = [...doc.querySelectorAll('.seg button')];
+    for (const t of tabs) {
+      const pre = new Image();
+      pre.src = 'ext/' + t.dataset.shot;
+      t.addEventListener('click', () => {
+        if (t.getAttribute('aria-selected') === 'true') return;
+        tabs.forEach((b) => b.setAttribute('aria-selected', String(b === t)));
+        img.classList.add('swap');
+        setTimeout(() => {
+          img.src = 'ext/' + t.dataset.shot;
+          img.alt = t.dataset.shot.includes('calm') ? 'MOFO drawing the plan on a calm chart: buy zone, stop, targets, support and resistance, the gaussian channel' : img.alt;
+          img.classList.remove('swap');
+        }, 220);
+      });
+    }
+  }
+
   // ---------------------------------------------------------------- pages
   enter(p, prev) {
     this.cur = p;
+    this.root.dataset.page = String(p);
+    if (p !== 5) this.root.classList.remove('docked');
+    if (p === 5 && this.doc) this.doc.scrollTop = 0;
     this.railBtns.forEach((b, i) => {
       b.classList.toggle('cur', i === p);
       b.classList.toggle('past', i < p);
@@ -245,7 +296,7 @@ export class UI {
   _leave(sec) {
     gsap.killTweensOf(sec.querySelectorAll('*'));
     const chars = sec.querySelectorAll('.ch');
-    const rest = sec.querySelectorAll('.idx, .body, .tags li, .heatbar, .rules > div, .fine, .card, .full .fw, .final-row, .final-fine');
+    const rest = sec.querySelectorAll('.idx, .body, .tags li, .heatbar, .rules > div, .fine, .card, .full .fw, .final-row, .final-fine, .doc-cta, .doc-down, .blk');
     gsap.to(chars, { opacity: 0, yPercent: -40, '--w': 62, duration: 0.32, stagger: 0.025, ease: 'power3.in' });
     gsap.to(rest, {
       opacity: 0,
@@ -285,7 +336,8 @@ export class UI {
     });
     const body = sec.querySelectorAll('.body, .fine');
     gsap.fromTo(body, { opacity: 0, y: 18, clipPath: 'inset(0 0 100% 0)' }, { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 1.1, delay: d + 0.35, stagger: 0.12, ease: 'expo.out' });
-    const bits = sec.querySelectorAll('.tags li, .heatbar, .rules > div, .card');
+    gsap.set(sec.querySelectorAll('.blk'), { opacity: 1, y: 0 });
+    const bits = sec.querySelectorAll('.tags li, .heatbar, .rules > div, .card, .doc-cta .btn, .doc-down');
     gsap.fromTo(bits, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.7, delay: d + 0.6, stagger: 0.07, ease: 'power3.out' });
     const fw = sec.querySelectorAll('.full .fw');
     if (fw.length) {

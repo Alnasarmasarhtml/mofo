@@ -14,7 +14,7 @@ import { UI } from './ui/ui.js';
 import { Intro } from './world/intro.js';
 import './style.css';
 
-const PAGES = 5;
+const PAGES = 6;
 const isTouch = matchMedia('(pointer: coarse)').matches;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -85,6 +85,7 @@ async function boot() {
     { white: 1, bloom: 0.0, streak: 0.0, rays: 0.0, eclipse: 0.0, spike: 0.9, eyes: 1, rough: 0.05, glass: 0, env: 1, scrim: 0.6, side: 1 },
     { white: 0, bloom: 0.4, streak: 0.14, rays: 0.55, eclipse: 0.7, spike: 0, eyes: 1, rough: 0.07, glass: 0, env: 0.85, scrim: 0.86, side: -1 },
     { white: 0, bloom: 0.5, streak: 0.18, rays: 0.85, eclipse: 1.0, spike: 0, eyes: 0, rough: 0.06, glass: 0, env: 0.9, scrim: 0.7, side: 0 },
+    { white: 0, bloom: 0.45, streak: 0.2, rays: 1.0, eclipse: 1.0, spike: 0, eyes: 1, rough: 0.06, glass: 0, env: 0.9, scrim: 0.62, side: -1 },
   ];
   // The grade follows the camera, not the click: every value is blended between the two pages the camera is
   // travelling between, so the sky turns white exactly when the F comes into view, in both directions.
@@ -131,6 +132,15 @@ async function boot() {
     }
   }
   scroller.on((target) => enterPage(target));
+  // the tool page scrolls itself: it keeps the wheel until you're back at its top
+  const doc = document.getElementById('doc');
+  scroller.consume = (dir) => {
+    if (page !== 5 || !doc) return false;
+    if (dir > 0) return doc.scrollTop + doc.clientHeight < doc.scrollHeight - 2;
+    if (dir < 0) return doc.scrollTop > 2;
+    return true;
+  };
+  scroller.onKeyScroll = (dir) => doc.scrollBy({ top: dir * innerHeight * 0.8, behavior: 'smooth' });
   ui.onNav = (i) => {
     scroller.lockUntil = 0;
     scroller.go(i);

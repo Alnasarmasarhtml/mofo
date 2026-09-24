@@ -97,6 +97,125 @@
       </div>
       <p class="fine final-fine">the extension is free, and it can't place trades or touch your wallet.</p>
     </section>
+    <section class="page page-doc" data-p="5">
+      <div class="doc" id="doc">
+        <header class="doc-hero">
+          <div class="idx"><b>06</b><span>/06</span><em class="idx-logo"><img src="logo.svg" alt=""></em></div>
+          <h2 class="word" data-word="THE TOOL">THE TOOL</h2>
+          <p class="body">mofo is a free chrome extension for fomo.family. it draws on the chart you already use and checks every buy against your rules before you click. it can't place trades or touch your wallet.</p>
+          <div class="doc-cta">
+            <a class="btn btn-solid" data-link="extension" href="#" download><span>get the extension</span><i class="arr"></i></a>
+            <a class="btn btn-ghost" data-link="x" href="#" target="_blank" rel="noopener"><span>x · @mindoverfomo</span></a>
+            <a class="btn btn-ghost" data-link="telegram" href="#" target="_blank" rel="noopener"><span>telegram</span></a>
+          </div>
+          <div class="doc-down" aria-hidden="true"><span>how it works</span><i></i></div>
+        </header>
+
+        <article class="blk feat feat-chart" id="overlay">
+          <div class="blk-h"><b>01</b><span>on the chart</span></div>
+          <div class="feat-grid">
+            <div class="feat-copy">
+              <h3>the chart overlay</h3>
+              <p>everything is drawn on fomo's own tradingview chart. the drawings are locked, so you can't drag one by accident, and they never get saved into your chart layout.</p>
+              <div class="seg" role="tablist" aria-label="chart state">
+                <button role="tab" aria-selected="true" data-shot="chart-extreme.webp">extreme · holding</button>
+                <button role="tab" aria-selected="false" data-shot="chart-calm.webp">calm · the plan</button>
+              </div>
+            </div>
+            <figure class="shot shot-chart">
+              <div class="shot-bar"><span>fomo.family · pepe2 · 1m</span><span>mofo overlay</span></div>
+              <img id="chartShot" src="ext/chart-extreme.webp" alt="MOFO drawing a gaussian channel, the fomo line, the extreme line, sell half and the breakeven stop on a pumping chart" loading="lazy" width="2410" height="1872">
+              <figcaption>preview build: the real extension code on a sample chart</figcaption>
+            </figure>
+          </div>
+          <dl class="spec">
+            <div><dt>gaussian channel</dt><dd>4 poles, 144 bars, bands at ×1.414 of the filtered range. the trend with the noise taken out. a close over the top band is statistically stretched.</dd></div>
+            <div><dt>fomo line</dt><dd>the price where the entry turns hot, EMA21 plus 2.5 ATR. the dotted line over it is extreme, plus 4 ATR. above those lines you're chasing.</dd></div>
+            <div><dt>the plan</dt><dd>a buy zone with its reward to risk, the stop where the idea is wrong, two targets from the next resistance. under 1.5R it tells you to skip.</dd></div>
+            <div><dt>levels</dt><dd>support and resistance zones built from swing points, labelled with how many times price touched them.</dd></div>
+            <div><dt>signals</dt><dd>breakout, breakdown, exhaustion and capitulation arrows, only on a clean close with real volume. smart money and kol entries at their average cost.</dd></div>
+            <div><dt>your position</dt><dd>your average entry, the stop moved to entry once you're up 25%, sell half at +50%, a trailing stop after +100%.</dd></div>
+            <div><dt>navy candles</dt><dd>optional. repaints fomo's candles and background in the same two colors, and puts fomo's own back when you switch it off.</dd></div>
+          </dl>
+        </article>
+
+        <article class="blk feat feat-panel">
+          <div class="blk-h"><b>02</b><span>the panel</span></div>
+          <div class="feat-grid feat-grid-rev">
+            <figure class="shot shot-panel">
+              <div class="shot-bar"><span>mofo panel</span><span>hot · holding</span></div>
+              <img src="ext/panel.webp" alt="The MOFO panel: entry check with the gaussian bell meter, plan and position" loading="lazy" width="680" height="1560">
+            </figure>
+            <div class="feat-copy">
+              <h3>everything else, in one panel</h3>
+              <p>it sits on the chart, drags anywhere, collapses to one line and refreshes every 4 seconds.</p>
+              <dl class="spec spec-1">
+                <div><dt>entry check</dt><dd>calm, warm, hot or extreme, a bell curve showing where price sits in its channel, RSI and distance from EMA21.</dd></div>
+                <div><dt>your position</dt><dd>p&amp;l, best price since the buy, which stop is live and when to sell half.</dd></div>
+                <div><dt>who holds it</dt><dd>the top 40 holders, with the 8 biggest profiled: 30 day win rate, realized p&amp;l, hold time. bundlers, snipers, insiders and wallets with a shared funder get flagged.</dd></div>
+                <div><dt>token risk</dt><dd>liquidity, top 10 share, launch age, one-sided or bot-like flow, missing socials. every warning says where its rule comes from.</dd></div>
+                <div><dt>narrative</dt><dd>one click searches x for the contract, the name and the ticker, and writes what the token is and where it came from.</dd></div>
+                <div><dt>ask mofo</dt><dd>a chat that sees the chart analysis, the holders, your position and your rules.</dd></div>
+                <div><dt>trade journal</dt><dd>every closed trade graded against your rules, with what the rules would have made.</dd></div>
+              </dl>
+            </div>
+          </div>
+        </article>
+
+        <article class="blk feat feat-page">
+          <div class="blk-h"><b>03</b><span>on fomo itself</span></div>
+          <div class="feat-grid">
+            <div class="feat-copy">
+              <h3>you don't have to open anything</h3>
+              <p>badges sit next to the token name: risk, entry heat, bundlers and insiders, smart money, fresh wallets. above fomo's buy button you get a warning when you're chasing, over your max size, averaging down or past your daily loss limit.</p>
+            </div>
+            <div class="shots-stack">
+              <figure class="shot shot-strip">
+                <div class="shot-bar"><span>token header</span><span>badges</span></div>
+                <img src="ext/badges.webp" alt="MOFO badges next to the token name on fomo.family" loading="lazy" width="1400" height="130">
+              </figure>
+              <figure class="shot shot-buy">
+                <div class="shot-bar"><span>buy box</span><span>warning</span></div>
+                <img src="ext/buybox.webp" alt="MOFO warning above the buy button: entry extreme and over max size" loading="lazy" width="792" height="552">
+              </figure>
+            </div>
+          </div>
+        </article>
+
+        <section class="blk pros">
+          <div class="blk-h"><b>04</b><span>why use it</span></div>
+          <ol class="pros-grid">
+            <li><b>heat before the click</b><span>the entry check runs on every chart you open, so you see hot or extreme before the buy, not after.</span></li>
+            <li><b>exits set in advance</b><span>stop to entry, sell half and the emergency stop are on the chart from the start, decided while you're calm.</span></li>
+            <li><b>holders checked first</b><span>bundles, insiders and shared funders show up as badges before you're in.</span></li>
+            <li><b>one screen</b><span>all of it sits on fomo.family. no second tab, no second app.</span></li>
+            <li><b>can't touch your wallet</b><span>no signing, no trading, no wallet permissions. it reads your own page in your own browser.</span></li>
+            <li><b>tested on real trades</b><span>stop to entry, sell half and the emergency stop, replayed on 34 real closed trades, added $2,541.</span></li>
+          </ol>
+        </section>
+
+        <section class="blk install">
+          <div class="blk-h"><b>05</b><span>install</span></div>
+          <ol class="steps">
+            <li><b>1</b><span>download the extension and unzip it.</span></li>
+            <li><b>2</b><span>open chrome://extensions, turn on developer mode, click load unpacked and pick the folder.</span></li>
+            <li><b>3</b><span>open any token on fomo.family. mofo shows up on the chart.</span></li>
+          </ol>
+        </section>
+
+        <footer class="blk doc-foot">
+          <img class="foot-logo" src="logo.svg" alt="MOFO logo" width="120" height="120">
+          <div class="foot-name">MIND OVER FOMO</div>
+          <div class="foot-links">
+            <a class="btn btn-solid" data-link="buy" href="#" target="_blank" rel="noopener"><span>buy $mofo</span><i class="arr"></i></a>
+            <a class="btn btn-ghost" data-link="x" href="#" target="_blank" rel="noopener"><span>x</span></a>
+            <a class="btn btn-ghost" data-link="telegram" href="#" target="_blank" rel="noopener"><span>telegram</span></a>
+            <button class="btn btn-ghost" type="button" data-go="0"><span>back to the top</span></button>
+          </div>
+          <p class="fine">an analysis tool. nothing on this site or in the extension is financial advice.</p>
+        </footer>
+      </div>
+    </section>
   </main>
 
   <nav class="rail" aria-label="pages">
@@ -105,6 +224,7 @@
     <button data-go="2" data-w="FEAR"><span>F</span></button>
     <button data-go="3" data-w="OF"><span>O</span></button>
     <button data-go="4" data-w="$MOFO"><span>$</span></button>
+    <button data-go="5" data-w="THE TOOL" class="rail-logo"><img src="logo.svg" alt=""></button>
     <i class="rail-bar"><i></i></i>
   </nav>
 
