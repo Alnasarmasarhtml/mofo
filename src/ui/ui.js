@@ -257,6 +257,7 @@ export class UI {
     );
     items.forEach((el) => io.observe(el));
     initAura(doc);
+    initAura(document.querySelector('.page-final'));
     const img = document.getElementById('chartShot');
     const tabs = [...doc.querySelectorAll('.seg button')];
     for (const t of tabs) {
