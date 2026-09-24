@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MOFO · mind over fomo</title>
+<meta name="description" content="mind over fear of missing out. a chart copilot for fomo.family that tells you when you're chasing. $MOFO">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/MartianMono-var.woff2" as="font" type="font/woff2" crossorigin>
+<meta property="og:title" content="MOFO · mind over fomo">
+<meta property="og:description" content="mind over fear of missing out. $MOFO">
+<meta property="og:image" content="https://alnasarmasarhtml.github.io/mofo/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://alnasarmasarhtml.github.io/mofo/">
+<meta name="twitter:image" content="https://alnasarmasarhtml.github.io/mofo/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="loader"></canvas>
+
+<div id="ui" aria-live="polite">
+  <header class="top">
+    <a class="brand" href="#" data-go="0" aria-label="MOFO, back to the start">
+      <span class="brand-word">MOF<span class="brand-o"></span></span>
+      <span class="brand-tick">$MOFO</span>
+    </a>
+    <div class="top-right">
+      <a class="btn btn-ghost" data-link="extension" href="#" download><span>get the extension</span></a>
+      <a class="btn btn-solid" data-link="buy" href="#" target="_blank" rel="noopener"><span>buy $mofo</span><i class="arr"></i></a>
+    </div>
+  </header>
+
+  <main class="pages">
+    <section class="page" data-p="0" data-side="left">
+      <div class="idx"><b>01</b><span>/05</span><em>M</em></div>
+      <h2 class="word" data-word="MIND">MIND</h2>
+      <p class="body">mofo is a copilot for fomo.family. it reads the chart and the holders before you do, and checks every buy against the rules you set for yourself.</p>
+      <ul class="tags"><li>chrome extension</li><li>free</li><li>can't place trades</li></ul>
+    </section>
+
+    <section class="page" data-p="1" data-side="left">
+      <div class="idx"><b>02</b><span>/05</span><em>O</em></div>
+      <h2 class="word" data-word="OVER">OVER</h2>
+      <p class="body">it draws over the chart you already trade on. a gaussian channel, the line where chasing starts, a buy zone with a stop and two targets, support and resistance with how many times each one held.</p>
+      <ul class="tags"><li>gaussian 4 · 144 · ×1.414</li><li>fomo line</li><li>buy zone + stop</li></ul>
+    </section>
+
+    <section class="page" data-p="2" data-side="right">
+      <div class="idx"><b>03</b><span>/05</span><em>F</em></div>
+      <h2 class="word" data-word="FEAR">FEAR</h2>
+      <p class="body">+312% in 15 minutes and the buy button is right there. mofo reads the same candles and gives the entry a heat. at hot it says wait for the pullback, and draws where the pullback is.</p>
+      <div class="heatbar" role="img" aria-label="entry heat scale">
+        <span data-h="0">calm</span><span data-h="1">warm</span><span data-h="2">hot</span><span data-h="3">extreme</span>
+      </div>
+      <dl class="rules">
+        <div><dt>stop to entry</dt><dd>+25%</dd></div>
+        <div><dt>sell half</dt><dd>+50%</dd></div>
+        <div><dt>emergency stop</dt><dd>-60%</dd></div>
+        <div><dt>max buy</dt><dd>$500</dd></div>
+      </dl>
+      <p class="fine">stop to entry, sell half and the emergency stop, replayed on 34 real closed trades, added $2,541.</p>
+    </section>
+
+    <section class="page" data-p="3" data-side="left">
+      <div class="idx"><b>04</b><span>/05</span><em>O</em></div>
+      <h2 class="word" data-word="OF">OF</h2>
+      <p class="body">mofo pulls the top 40 holders and profiles the 8 biggest wallets: 30 day win rate, what they made, how long they hold. bundlers, snipers, insiders and wallets funded by the same wallet get flagged.</p>
+      <div class="card">
+        <div class="card-h"><span>who holds it</span><span>sample token</span></div>
+        <div class="card-r"><span>bundlers</span><i style="--v:.37"></i><b>18.4%</b></div>
+        <div class="card-r"><span>insiders</span><i style="--v:.18"></i><b>9.2%</b></div>
+        <div class="card-r"><span>snipers</span><i style="--v:.12"></i><b>6.1%</b></div>
+        <div class="card-r"><span>shared funder</span><i style="--v:.3"></i><b>7 wallets · 14.8%</b></div>
+        <div class="card-f">bundlers + insiders over 15%: serious</div>
+      </div>
+    </section>
+
+    <section class="page page-final" data-p="4" data-side="center">
+      <h2 class="full" aria-label="Mind over fear of missing out">
+        <span class="fw"><b>M</b>IND</span> <span class="fw"><b>O</b>VER</span> <span class="fw"><b>F</b>EAR</span> <span class="fw"><b>O</b>F</span> <span class="fw">MISSING</span> <span class="fw">OUT</span>
+      </h2>
+      <div class="final-row">
+        <div class="ca">
+          <span class="ca-k">CA</span>
+          <button class="ca-v" type="button" data-copy>soon</button>
+        </div>
+        <div class="final-btns">
+          <a class="btn btn-solid" data-link="buy" href="#" target="_blank" rel="noopener"><span>buy $mofo</span><i class="arr"></i></a>
+          <a class="btn btn-ghost" data-link="extension" href="#" download><span>get the extension</span></a>
+          <a class="btn btn-icon" data-link="x" href="#" target="_blank" rel="noopener" aria-label="X"><span>x</span></a>
+          <a class="btn btn-icon" data-link="telegram" href="#" target="_blank" rel="noopener" aria-label="Telegram"><span>tg</span></a>
+        </div>
+      </div>
+      <p class="fine final-fine">the extension is free, and it can't place trades or touch your wallet.</p>
+    </section>
+  </main>
+
+  <nav class="rail" aria-label="pages">
+    <button data-go="0" data-w="MIND"><span>M</span></button>
+    <button data-go="1" data-w="OVER"><span>O</span></button>
+    <button data-go="2" data-w="FEAR"><span>F</span></button>
+    <button data-go="3" data-w="OF"><span>O</span></button>
+    <button data-go="4" data-w="$MOFO"><span>$</span></button>
+    <i class="rail-bar"><i></i></i>
+  </nav>
+
+  <div class="hud hud-bl">
+    <div class="hud-k">gauss</div><div class="hud-v">N4 · P144 · σ1.414</div>
+    <div class="hud-k">heat</div><div class="hud-v" id="hud-heat">CALM</div>
+  </div>
+  <div class="hud hud-br">
+    <div class="scroll-ring" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><defs><path id="circ" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/></defs><text><textPath href="#circ" textLength="236" lengthAdjust="spacing">scroll · mind over fomo · </textPath></text></svg>
+      <i></i>
+    </div>
+  </div>
+
+  <div class="subs"><span id="sub"></span></div>
+</div>
+
+<div id="cursor" aria-hidden="true"><i class="cx"></i><i class="cy"></i><span class="clab"><b id="cprice">$0.00042</b><em id="ctime">00:00</em></span></div>
+
+<noscript><div style="color:#fff;font:16px sans-serif;padding:40px">MOFO · mind over fear of missing out. this site needs javascript and webgl.</div></noscript>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
