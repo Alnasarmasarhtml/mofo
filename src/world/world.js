@@ -47,13 +47,13 @@ export function buildPaths(slots, extra = {}) {
   const P = {
     0: { pos: add(M, -1, -2, 36), target: add(M, 0.5, -7.8, 0), fov: 58, roll: 0.02 },
     1: { pos: add(O, 0.5, -2, 31), target: add(O, 0, -7.4, -4), fov: 58, roll: 0 },
-    2: { pos: add(F, 3, -3, 36), target: add(F, -1, -6.4, 0), fov: 58, roll: -0.03 },
+    2: { pos: add(F, 3, -3, 40), target: add(F, -1, -11, 0), fov: 58, roll: -0.03 },
     3: { pos: add(S, 0, -1.5, 35), target: add(S, 0, -7.8, 0), fov: 58, roll: 0 },
     4: { pos: v(0, 2, 122), target: v(0, -17.5, 0), fov: 58, roll: 0 },
     5: { pos: v(0, 30, 90), target: v(0, 46, -420), fov: 64, roll: 0 },
   };
   const camP = new KeyPath(cam.keys.map((k) => (Number.isInteger(k.v) ? Object.assign({ v: k.v }, P[k.v]) : Object.assign({}, k, { fov: k.fov + 14 }))));
-  const OP = { 0: add(M, -2.6, -4.6, 11), 1: add(O, 3.2, -4.6, 9), 2: add(F, 4.2, 5.2, 6), 3: S.clone(), 4: S.clone(), 5: S.clone() };
+  const OP = { 0: add(M, -2.6, -4.6, 11), 1: add(O, 3.2, -4.6, 9), 2: add(F, 4.4, 2.6, 6), 3: S.clone(), 4: S.clone(), 5: S.clone() };
   const orbP = new KeyPath(orb.keys.map((k) => (OP[k.v] ? Object.assign({}, k, { pos: OP[k.v] }) : k)));
   return { cam, orb, camP, orbP };
 }

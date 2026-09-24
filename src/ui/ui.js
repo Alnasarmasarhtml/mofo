@@ -296,7 +296,7 @@ export class UI {
   _leave(sec) {
     gsap.killTweensOf(sec.querySelectorAll('*'));
     const chars = sec.querySelectorAll('.ch');
-    const rest = sec.querySelectorAll('.idx, .body, .tags li, .heatbar, .rules > div, .fine, .card, .full .fw, .final-row, .final-fine, .doc-cta, .doc-down, .blk');
+    const rest = sec.querySelectorAll('.idx, .word-sub, .body, .tags li, .heatbar, .rules > div, .fine, .card, .full .fw, .final-row, .final-fine, .doc-cta, .doc-down, .blk');
     gsap.to(chars, { opacity: 0, yPercent: -40, '--w': 62, duration: 0.32, stagger: 0.025, ease: 'power3.in' });
     gsap.to(rest, {
       opacity: 0,
@@ -334,6 +334,8 @@ export class UI {
         });
       }
     });
+    const sub = sec.querySelector('.word-sub');
+    if (sub) gsap.fromTo(sub, { opacity: 0, yPercent: 60 }, { opacity: 1, yPercent: 0, duration: 1, delay: d + 0.05 + chars.length * 0.07, ease: 'expo.out' });
     const body = sec.querySelectorAll('.body, .fine');
     gsap.fromTo(body, { opacity: 0, y: 18, clipPath: 'inset(0 0 100% 0)' }, { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 1.1, delay: d + 0.35, stagger: 0.12, ease: 'expo.out' });
     gsap.set(sec.querySelectorAll('.blk'), { opacity: 1, y: 0 });
