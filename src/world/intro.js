@@ -17,7 +17,9 @@ uniform sampler2D map; uniform float uSide;
 varying vec2 vUv; varying float vFront; varying vec3 vN;
 void main(){
   vec3 t = texture2D(map, vUv).rgb;
-  vec3 front = pow(t, vec3(2.2)) * 6.;
+  // the loader is navy and white; its brightness is what matters, the grade maps it back to fomo's navy
+  float lum = dot(t, vec3(.2126, .7152, .0722));
+  vec3 front = vec3(pow(smoothstep(.06, 1., lum), 2.2) * 6.);
   float lit = .35 + .65 * clamp(dot(vN, normalize(vec3(.3, .8, .5))), 0., 1.);
   vec3 side = vec3(uSide * lit);
   gl_FragColor = vec4(mix(side, front, vFront), 1.);

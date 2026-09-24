@@ -130,7 +130,7 @@ class FlarePass extends Pass {
 }
 
 const FINAL = /* glsl */ `
-uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uTime;
+uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uTime; uniform vec3 uNavy;
 uniform float uGrain, uVignette, uZoom, uDither, uDitherScale, uInvert, uLetterbox, uMono, uFlash, uScrim, uScrimSide, uScrimInk, uPortrait;
 varying vec2 vUv;
 float bayer2(vec2 a){ a = floor(a); return fract(a.x / 2. + a.y * a.y * .75); }
@@ -154,32 +154,30 @@ void main(){
   } else {
     col = texture2D(tDiffuse, uv).rgb;
   }
+  // everything below works on brightness only; the last line maps it onto fomo's navy and white
   float l = dot(col, vec3(.2126, .7152, .0722));
-  col = mix(col, vec3(l), uMono);
   // lower-third scrim toward the page colour behind the copy, so type never sits on a highlight
   float sx = uScrimSide < -.5 ? smoothstep(.66, .02, uv.x) : uScrimSide > .5 ? smoothstep(.34, .98, uv.x) : 1. - smoothstep(.1, .6, abs(uv.x - .5));
   sx = mix(sx, 1., uPortrait);
   float sy = mix(smoothstep(.94, .28, uv.y), smoothstep(.62, .2, uv.y), uPortrait);
-  col = mix(col, vec3(uScrimInk), clamp(uScrim * sx * sy, 0., 1.));
+  l = mix(l, uScrimInk, clamp(uScrim * sx * sy, 0., 1.));
   // vignette
   vec2 q = uv * 2. - 1.;
   q.x *= mix(1., uRes.y / uRes.x, .5);
-  col *= mix(1., smoothstep(1.9, .55, length(q)), uVignette);
+  l *= mix(1., smoothstep(1.9, .55, length(q)), uVignette);
   // 1-bit ordered dither
   if (uDither > 0.001) {
     float th = bayer8(gl_FragCoord.xy / uDitherScale);
-    float lum = dot(col, vec3(.2126, .7152, .0722));
-    vec3 bit = vec3(step(th, lum));
-    col = mix(col, bit, uDither);
+    l = mix(l, step(th, l), uDither);
   }
   // grain
-  float g = hash(gl_FragCoord.xy + fract(uTime * 7.13) * 91.7) - .5;
-  col += g * uGrain;
-  col = mix(col, vec3(1.) - col, uInvert);
-  col = mix(col, vec3(1.), uFlash);
+  l += (hash(gl_FragCoord.xy + fract(uTime * 7.13) * 91.7) - .5) * uGrain;
+  l = mix(l, 1. - l, uInvert);
+  l = mix(l, 1., uFlash);
   // letterbox bars
   float lb = uLetterbox * .5;
-  if (uv.y < lb || uv.y > 1. - lb) col = vec3(0.);
+  if (uv.y < lb || uv.y > 1. - lb) l = 0.;
+  col = mix(uNavy, vec3(1.), clamp(l, 0., 1.));
   gl_FragColor = vec4(col, 1.);
 }`;
 
@@ -215,6 +213,7 @@ export function makePost(renderer, scene, camera) {
     uScrimSide: { value: -1 },
     uScrimInk: { value: 0 },
     uPortrait: { value: 0 },
+    uNavy: { value: new THREE.Vector3(11 / 255, 9 / 255, 31 / 255) }, // #0B091F, fomo's black
   };
   const finalPass = new (class extends Pass {
     constructor() {

@@ -76,7 +76,7 @@ async function boot() {
   scene.add(key, new THREE.AmbientLight(0xffffff, 0.35));
 
   const post = makePost(renderer, scene, camera);
-  const scroller = new Scroller(PAGES, { start: 0 });
+  const scroller = new Scroller(PAGES, { start: 0, pace: isTouch ? 1.25 : 1 });
 
   // ---------------------------------------------------------------- page states
   const PAGE_STATE = [
@@ -255,6 +255,7 @@ async function boot() {
     post.final.uScrim.value = g.scrim;
     post.final.uScrimSide.value = g.side;
     post.final.uPortrait.value = rig.portrait;
+    ui.setLight(g.white > 0.5);
     post.final.uScrimInk.value = g.ink;
     post.final.uGrain.value = 0.045 - g.white * 0.03;
 

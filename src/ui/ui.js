@@ -20,6 +20,7 @@ export class UI {
     this.sub = document.getElementById('sub');
     this.cursor = document.getElementById('cursor');
     this.onNav = null;
+    this.pace = matchMedia('(pointer: coarse)').matches ? 0.8 : 1; // phones move 25% faster
     this.cur = -1;
     this.heatLevel = -1;
     this.loader = document.getElementById('loader');
@@ -72,7 +73,7 @@ export class UI {
     const W = this.loader.width;
     const H = this.loader.height;
     const d = this.ldpr;
-    c.fillStyle = '#000';
+    c.fillStyle = '#0B091F';
     c.fillRect(0, 0, W, H);
     // the word
     let size = Math.min(H * 0.34, W * 0.2);
@@ -109,7 +110,7 @@ export class UI {
     };
     c.textBaseline = 'top';
     mono('', 10);
-    c.fillText('MIND OVER FEAR OF MISSING OUT', pad, pad);
+    c.fillText('MIND OVER FOMO', pad, pad);
     const tk = '$MOFO';
     c.fillText(tk, W - pad - c.measureText(tk).width, pad);
     c.textBaseline = 'bottom';
@@ -235,7 +236,7 @@ export class UI {
     const out = prev >= 0 ? this.sections[prev] : null;
     if (out) this._leave(out);
     const sec = this.sections[p];
-    const delay = prev >= 0 ? 0.55 : 0.2;
+    const delay = (prev >= 0 ? 0.55 : 0.2) * this.pace;
     if (this.revealed) this._show(sec, delay);
     else this.pendingShow = sec;
     this._subtitle(SUBS[p] || '', delay + 0.5);
@@ -326,6 +327,14 @@ export class UI {
   }
 
   update() {}
+
+  // the white page: the whole UI swaps ink and paper
+  setLight(on) {
+    if (on === this.light) return;
+    this.light = on;
+    this.root.classList.toggle('light', on);
+    this.cursor.classList.toggle('light', on);
+  }
 
   ready() {
     this.root.classList.add('on');

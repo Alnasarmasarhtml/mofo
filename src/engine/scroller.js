@@ -6,6 +6,7 @@ export class Scroller {
   constructor(count, opts = {}) {
     this.count = count;
     this.value = opts.start || 0;
+    this.pace = opts.pace || 1; // 1.25 = every page flight 25% quicker
     this.target = this.value;
     this.vel = 0;
     this.stretch = 0; // small rubber-band offset while the wheel is pulling, feels responsive before a step fires
@@ -47,7 +48,7 @@ export class Scroller {
     if (now < this.lockUntil) return;
     const next = Math.max(0, Math.min(this.count - 1, this.target + dir));
     if (next === this.target) return;
-    this.lockUntil = now + 650;
+    this.lockUntil = now + 650 / this.pace;
     this.go(next);
   }
 
@@ -131,7 +132,7 @@ export class Scroller {
   update(dt) {
     dt = Math.min(dt, 1 / 30);
     // critically damped spring toward the target page
-    const k = 22;
+    const k = 22 * this.pace * this.pace;
     const c = 2 * Math.sqrt(k) * 0.92;
     const x = this.value - (this.target + this.stretch);
     this.vel += (-k * x - c * this.vel) * dt;
