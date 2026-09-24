@@ -26,11 +26,12 @@
   --cut: 10px;
   --ease: cubic-bezier(.2, .7, .1, 1);
   --navy: #0B091F; /* fomo's black */
-  --ink: #fff;
+  --lav: #EAEDFF; /* fomo's white, from the logo */
+  --ink: #EAEDFF;
   --paper: #0B091F;
 }
 /* the white page: ink and paper swap, so every element flips with it */
-.light { --ink: #0B091F; --paper: #fff; }
+.light { --ink: #0B091F; --paper: #EAEDFF; }
 
 * { box-sizing: border-box; }
 html, body {
@@ -38,7 +39,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: var(--navy);
-  color: #fff;
+  color: var(--lav);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
@@ -74,7 +75,7 @@ a { color: inherit; text-decoration: none; }
   justify-content: space-between;
   gap: 16px;
 }
-.brand { display: flex; align-items: baseline; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 12px; }
 .brand-word {
   font-weight: 900;
   font-stretch: 125%;
@@ -84,28 +85,9 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex;
   align-items: center;
 }
-/* the O is the mind: a disc with two pill eyes */
-.brand-o {
-  display: inline-block;
-  position: relative;
-  width: .78em;
-  height: .82em;
-  margin-left: .06em;
-  border-radius: 50%;
-  background: var(--ink);
-}
-.brand-o::before, .brand-o::after {
-  content: '';
-  position: absolute;
-  top: 26%;
-  width: 13%;
-  height: 30%;
-  border-radius: 99px;
-  background: var(--paper);
-  animation: blink 5.2s infinite;
-}
-.brand-o::before { left: 29%; }
-.brand-o::after { right: 29%; }
+/* the logo exactly as it is: the square with the head cut off at the bottom */
+.brand-logo { display: block; width: 34px; height: 34px; flex: 0 0 auto; outline: 1px solid var(--ink); outline-offset: 0; align-self: center; }
+.brand-logo img { display: block; width: 100%; height: 100%; }
 @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
 .brand-tick { font: 500 10px/1 var(--mono); letter-spacing: .12em; }
 
@@ -453,5 +435,5 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
   .subs { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .scroll-ring svg, .brand-o::before, .brand-o::after, .heatbar span[data-h='3'].lit::after, #hud-heat.extreme, .card-f::before { animation: none; }
+  .scroll-ring svg, .heatbar span[data-h='3'].lit::after, #hud-heat.extreme, .card-f::before { animation: none; }
 }

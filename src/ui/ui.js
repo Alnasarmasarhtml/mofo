@@ -88,18 +88,18 @@ export class UI {
     const x = (W - tw) / 2;
     const y = H * 0.5 + asc / 2;
     c.lineWidth = Math.max(1, 1.5 * d);
-    c.strokeStyle = '#fff';
+    c.strokeStyle = '#EAEDFF';
     c.strokeText('MOFO', x, y);
     c.save();
     c.beginPath();
     const fillTop = y - asc * p;
     c.rect(0, fillTop, W, H);
     c.clip();
-    c.fillStyle = '#fff';
+    c.fillStyle = '#EAEDFF';
     c.fillText('MOFO', x, y);
     c.restore();
     // hairline progress under the word
-    c.fillStyle = '#fff';
+    c.fillStyle = '#EAEDFF';
     c.fillRect(x, y + 24 * d, tw * p, Math.max(1, d));
     for (let i = 0; i <= 20; i++) c.fillRect(x + (tw * i) / 20, y + 20 * d, Math.max(1, d), 4 * d);
     // corners
@@ -348,6 +348,6 @@ export class UI {
   fail(e) {
     console.error(e);
     this.hideLoader();
-    document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;inset:0;display:grid;place-items:center;color:#fff;font:500 12px/1.6 monospace;padding:40px;text-align:center;z-index:99">MOFO needs WebGL to run.<br>mind over fear of missing out.</div>');
+    document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;inset:0;display:grid;place-items:center;color:#EAEDFF;font:500 12px/1.6 monospace;padding:40px;text-align:center;z-index:99">MOFO needs WebGL to run.<br>mind over fomo.</div>');
   }
 }
