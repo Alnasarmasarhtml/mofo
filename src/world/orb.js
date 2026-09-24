@@ -1,4 +1,4 @@
-// The mind: a chrome droplet with two black pill eyes. Calm = mirror smooth, eyes shut in two little arcs.
+// The mind: a chrome droplet with the logo's eyes. Calm = mirror smooth. FOMO = it grows spikes and the eyes go wide.
 // FOMO = it grows spikes and the eyes go wide. One mesh, every state is a uniform the animator moves.
 import * as THREE from 'three';
 
@@ -158,31 +158,59 @@ export class Orb {
     this.outline.visible = false;
     this.body.add(this.outline);
 
-    // eyes: open = black glossy pills, shut = thin downward arcs (content, meditating)
-    // eyes glow: white light in black chrome, readable on the black pages and the white one
+    // eyes: the logo's eyes, two parallelograms leaning right. Measured off the logo: each is .52 as wide as it is
+    // tall, the top edge sits .33 of the height further right than the bottom, the centres are 1.04 heights apart,
+    // corners slightly rounded. Light on the dark chrome, the logo inverted. Shut = squashed to a thin slanted bar.
     const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     eyeMat.color.setScalar(1.25);
     this.eyeMat = eyeMat;
-    const pill = new THREE.CapsuleGeometry(0.075, 0.2, 8, 20);
-    const arc = new THREE.TorusGeometry(0.1, 0.022, 10, 32, Math.PI);
+    const rimMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const H = 0.36;
+    const W = H * 0.52;
+    const S = H * 0.335;
+    const r = H * 0.035;
+    const pts = [
+      new THREE.Vector2(-W / 2 - S / 2, -H / 2),
+      new THREE.Vector2(W / 2 - S / 2, -H / 2),
+      new THREE.Vector2(W / 2 + S / 2, H / 2),
+      new THREE.Vector2(-W / 2 + S / 2, H / 2),
+    ];
+    const shape = new THREE.Shape();
+    // rounded corners: stop r short of each corner and curve through it
+    for (let i = 0; i < 4; i++) {
+      const p = pts[i];
+      const prev = pts[(i + 3) % 4];
+      const next = pts[(i + 1) % 4];
+      const a = p.clone().add(prev.clone().sub(p).normalize().multiplyScalar(r));
+      const b = p.clone().add(next.clone().sub(p).normalize().multiplyScalar(r));
+      if (i === 0) shape.moveTo(a.x, a.y);
+      else shape.lineTo(a.x, a.y);
+      shape.quadraticCurveTo(p.x, p.y, b.x, b.y);
+    }
+    shape.closePath();
+    const eyeGeo = new THREE.ExtrudeGeometry(shape, { depth: 0.045, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.006, bevelSegments: 2, curveSegments: 6 });
+    eyeGeo.translate(0, 0, -0.03); // the back sits inside the surface, the face just proud of it
     this.eyes = [];
     for (const side of [-1, 1]) {
       const pivot = new THREE.Group();
-      const dir = new THREE.Vector3(side * 0.3, 0.16, 1).normalize();
+      const dir = new THREE.Vector3(side * H * 0.52, 0.24, 1).normalize();
       // sit on the droplet surface (same base shape as the shader)
       const p = dir.clone();
       p.y *= 1.06;
       const k = 1 - 0.05 * dir.y;
       p.x *= k;
       p.z *= k;
-      pivot.position.copy(p.multiplyScalar(0.985));
+      pivot.position.copy(p);
       pivot.lookAt(pivot.position.clone().add(dir));
-      const open = new THREE.Mesh(pill, eyeMat);
-      const shut = new THREE.Mesh(arc, eyeMat);
-      shut.rotation.z = Math.PI; // arc curving downward: a closed, happy eye
-      pivot.add(open, shut);
+      const open = new THREE.Mesh(eyeGeo, eyeMat);
+      // a dark rim just behind each eye keeps it crisp when a bright reflection slides under it
+      const rim = new THREE.Mesh(eyeGeo, rimMat);
+      rim.scale.set(1.2, 1.12, 0.8);
+      rim.position.z = -0.006;
+      open.add(rim);
+      pivot.add(open);
       this.body.add(pivot);
-      this.eyes.push({ pivot, open, shut });
+      this.eyes.push({ pivot, open });
     }
   }
 
@@ -216,11 +244,8 @@ export class Orb {
     const wide = 1 + this.u.uSpike.value * 0.55;
     const blinkK = 1 - Math.sin(Math.min(1, this.blink) * Math.PI) * 0.92;
     for (const e of this.eyes) {
-      e.open.scale.set(wide, Math.max(0.001, open * blinkK * wide), wide);
-      e.open.visible = open > 0.02;
-      const s = Math.max(0.001, 1 - open);
-      e.shut.scale.setScalar(s);
-      e.shut.visible = s > 0.02;
+      // shut (and mid-blink) the eye flattens to a thin slanted bar instead of disappearing
+      e.open.scale.set(wide, Math.max(0.09, open * blinkK) * wide, wide);
     }
     // look: damped toward the target, a little jitter when anxious
     this.lookCur.lerp(this.lookTarget, 1 - Math.pow(0.02, dt));

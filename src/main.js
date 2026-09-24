@@ -84,7 +84,7 @@ async function boot() {
     { white: 0, bloom: 0.45, streak: 0.14, rays: 0.45, eclipse: 0.5, spike: 0.05, eyes: 1, rough: 0.06, glass: 0, env: 1, scrim: 0.86, side: -1 },
     { white: 1, bloom: 0.0, streak: 0.0, rays: 0.0, eclipse: 0.0, spike: 0.9, eyes: 1, rough: 0.05, glass: 0, env: 1, scrim: 0.6, side: 1 },
     { white: 0, bloom: 0.4, streak: 0.14, rays: 0.55, eclipse: 0.7, spike: 0, eyes: 1, rough: 0.07, glass: 0, env: 0.85, scrim: 0.86, side: -1 },
-    { white: 0, bloom: 0.5, streak: 0.18, rays: 0.85, eclipse: 1.0, spike: 0, eyes: 0, rough: 0.06, glass: 0, env: 0.9, scrim: 0.7, side: 0 },
+    { white: 0, bloom: 0.5, streak: 0.18, rays: 0.85, eclipse: 1.0, spike: 0, eyes: 1, rough: 0.06, glass: 0, env: 0.9, scrim: 0.7, side: 0 },
     { white: 0, bloom: 0.45, streak: 0.2, rays: 1.0, eclipse: 1.0, spike: 0, eyes: 1, rough: 0.06, glass: 0, env: 0.9, scrim: 0.62, side: -1 },
   ];
   // The grade follows the camera, not the click: every value is blended between the two pages the camera is
