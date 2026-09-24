@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · bubble buttons</title>
+<style>
+@font-face { font-family: 'Archivo'; src: url('/fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; }
+@font-face { font-family: 'Martian Mono'; src: url('/fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; }
+:root { --navy: #0B091F; --lav: #EAEDFF; --lav2: #C9CEF5; --mono: 'Martian Mono', monospace; --sans: 'Archivo', sans-serif; --spring: cubic-bezier(.34, 1.56, .64, 1); --ease: cubic-bezier(.2, .7, .1, 1); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--navy); color: var(--lav); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+a, button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.wrap { max-width: 1500px; margin: 0 auto; padding: 56px 40px 90px; }
+h1 { font-weight: 900; font-stretch: 125%; font-size: 64px; line-height: .9; letter-spacing: -.03em; margin: 0 0 10px; text-transform: uppercase; }
+.lede { font: 500 12px/1.6 var(--mono); letter-spacing: .06em; max-width: 72ch; margin: 0 0 48px; }
+.opt { border-top: 1px solid var(--lav); padding: 36px 0 48px; display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 1fr); gap: 40px; }
+.opt-h b { display: inline-grid; place-items: center; min-width: 30px; height: 24px; background: var(--lav); color: var(--navy); font: 700 12px/1 var(--mono); margin-bottom: 14px; border-radius: 99px; }
+.opt-h h2 { margin: 0 0 10px; font-weight: 900; font-stretch: 125%; font-size: 30px; letter-spacing: -.02em; text-transform: uppercase; line-height: .95; }
+.opt-h p { margin: 0; font-size: 15px; line-height: 1.5; max-width: 36ch; }
+.stage { display: grid; gap: 28px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; min-height: 64px; }
+.lbl { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 12px; }
+.light { background: var(--lav); color: var(--navy); padding: 24px; border-radius: 22px; }
+
+/* the logo's eyes, shared by several options */
+.eyes { display: inline-flex; gap: 3px; }
+.eyes i { display: block; width: 5px; height: 12px; background: currentColor; transform: skewX(-18deg); border-radius: 1.5px; animation: blink 4.6s infinite; transition: height .3s var(--spring), width .3s var(--spring); }
+@keyframes blink { 0%, 93%, 100% { transform: skewX(-18deg) scaleY(1); } 95% { transform: skewX(-18deg) scaleY(.12); } }
+
+/* ================================================================ 1 · LIQUID: a droplet that pulls away from the pill */
+.goo { position: relative; display: inline-grid; align-items: center; height: 52px; padding: 0 64px 0 26px; font: 800 16px/1 var(--sans); font-stretch: 116%; letter-spacing: -.01em; color: var(--navy); }
+.goo .shape { position: absolute; inset: 0; filter: url(#goo); pointer-events: none; }
+.goo .pill { position: absolute; inset: 4px 26px 4px 0; background: var(--lav); border-radius: 99px; transition: inset .45s var(--spring); }
+.goo .drop { position: absolute; right: 4px; top: 50%; width: 44px; height: 44px; margin-top: -22px; background: var(--lav); border-radius: 50%; transition: transform .55s var(--spring); }
+.goo .t { position: relative; z-index: 1; }
+.goo .ic { position: absolute; right: 4px; top: 50%; width: 44px; height: 44px; margin-top: -22px; display: grid; place-items: center; z-index: 1; transition: transform .55s var(--spring); color: var(--navy); }
+.goo:hover .drop, .goo.is-hover .drop, .goo:hover .ic, .goo.is-hover .ic { transform: translateX(22px); }
+.goo:hover .pill, .goo.is-hover .pill { inset: 2px 30px 2px -2px; }
+.goo:active .pill { inset: 6px 30px 6px 4px; }
+.goo-o { color: var(--lav); }
+.goo-o .pill { background: transparent; box-shadow: inset 0 0 0 1.5px var(--lav); }
+.goo-o .shape { filter: none; }
+.goo-o .drop { background: var(--lav); }
+.goo-o .ic { color: var(--navy); }
+.goo-sm { padding: 0 26px; }
+.goo-sm .pill { inset: 4px 0; }
+.light .goo { color: var(--lav); }
+.light .goo .pill, .light .goo .drop { background: var(--navy); }
+.light .goo .ic { color: var(--lav); }
+.light .goo-o { color: var(--navy); }
+.light .goo-o .pill { background: transparent; box-shadow: inset 0 0 0 1.5px var(--navy); }
+
+/* ================================================================ 2 · JELLY KEY: a soft pushable bubble with a real side */
+.jelly {
+  --top: var(--lav); --ink: var(--navy); --side: var(--navy); --edge: var(--lav);
+  position: relative; display: inline-flex; align-items: center; gap: 12px; height: 50px; padding: 0 24px; margin-bottom: 7px;
+  font: 800 16px/1 var(--sans); font-stretch: 116%; letter-spacing: -.01em; color: var(--ink);
+  background: var(--top); border-radius: 99px;
+  box-shadow: inset 0 0 0 1.5px var(--edge), 0 7px 0 0 var(--side), 0 7px 0 1.5px var(--edge);
+  transform: translateY(0);
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+/* a glossy highlight across the top like a bubble */
+.jelly::before { content: ''; position: absolute; left: 14px; right: 30%; top: 6px; height: 9px; border-radius: 99px; background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0)); opacity: .55; pointer-events: none; }
+.jelly:hover, .jelly.is-hover { animation: wobble .6s var(--ease); }
+.jelly:active, .jelly.is-press { transform: translateY(6px); box-shadow: inset 0 0 0 1.5px var(--edge), 0 1px 0 0 var(--side), 0 1px 0 1.5px var(--edge); }
+@keyframes wobble { 0% { scale: 1 1; } 30% { scale: 1.07 .92; } 55% { scale: .96 1.05; } 75% { scale: 1.02 .98; } 100% { scale: 1 1; } }
+.jelly-o { --top: var(--navy); --ink: var(--lav); }
+.jelly-o::before { opacity: .12; }
+.jelly-sq { width: 50px; padding: 0; justify-content: center; }
+.jelly:hover .eyes i, .jelly.is-hover .eyes i { height: 14px; }
+.light .jelly { --top: var(--navy); --ink: var(--lav); --side: var(--lav); --edge: var(--navy); }
+.light .jelly::before { opacity: .18; }
+.light .jelly-o { --top: var(--lav); --ink: var(--navy); }
+
+/* ================================================================ 3 · CHROME BUBBLE: the ball's material, painted in CSS */
+.chrome {
+  position: relative; display: inline-flex; align-items: center; gap: 12px; height: 52px; padding: 0 26px;
+  font: 800 16px/1 var(--sans); font-stretch: 116%; letter-spacing: -.01em; color: var(--lav);
+  border-radius: 99px; isolation: isolate; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 30% 0%, rgba(234, 237, 255, .55) 0%, rgba(234, 237, 255, 0) 42%),
+    linear-gradient(180deg, #2a2748 0%, #0f0d25 48%, #07061a 52%, #1c1a3a 100%);
+  box-shadow: inset 0 0 0 1.5px rgba(234, 237, 255, .75), inset 0 -8px 16px rgba(234, 237, 255, .12), 0 10px 26px rgba(0, 0, 0, .45);
+  transition: transform .5s var(--spring);
+}
+/* the horizon line every chrome thing on the site reflects, and a soft specular */
+.chrome::before { content: ''; position: absolute; left: 10%; right: 10%; top: 76%; height: 1px; background: linear-gradient(90deg, transparent, rgba(234, 237, 255, .8) 20%, rgba(234, 237, 255, .8) 80%, transparent); z-index: -1; transition: transform .6s var(--ease); }
+.chrome::after { content: ''; position: absolute; left: 12%; top: 5px; width: 32%; height: 12px; border-radius: 99px; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0)); z-index: -1; transition: transform .6s var(--ease); }
+.chrome:hover, .chrome.is-hover { transform: scale(1.05); }
+.chrome:hover::after, .chrome.is-hover::after { transform: translateX(120%); }
+.chrome:hover::before, .chrome.is-hover::before { transform: translateY(-4px); }
+.chrome:active { transform: scale(.96); }
+.chrome-l { color: var(--navy); background:
+    radial-gradient(120% 90% at 30% 0%, rgba(255, 255, 255, .95) 0%, rgba(255, 255, 255, 0) 45%),
+    linear-gradient(180deg, #ffffff 0%, #e2e6ff 48%, #b9bee8 52%, #eef0ff 100%);
+  box-shadow: inset 0 0 0 1.5px rgba(11, 9, 31, .15), inset 0 -8px 16px rgba(11, 9, 31, .18), 0 10px 26px rgba(0, 0, 0, .45); }
+.chrome-l::before { background: linear-gradient(90deg, transparent, rgba(11, 9, 31, .35) 20%, rgba(11, 9, 31, .35) 80%, transparent); }
+.chrome-sq { width: 52px; padding: 0; justify-content: center; }
+.light .chrome { box-shadow: inset 0 0 0 1.5px rgba(234, 237, 255, .75), inset 0 -8px 16px rgba(234, 237, 255, .12), 0 10px 22px rgba(11, 9, 31, .35); }
+
+/* ================================================================ 4 · REAL 3D: a chrome/vinyl pill rendered live under the label */
+.p3 { position: relative; display: inline-flex; align-items: center; gap: 12px; height: 56px; padding: 0 30px; font: 800 16px/1 var(--sans); font-stretch: 116%; letter-spacing: -.01em; }
+.p3 canvas { position: absolute; left: -18px; top: -18px; width: calc(100% + 36px); height: calc(100% + 36px); pointer-events: none; z-index: 0; filter: url(#duo); }
+.p3 > span { position: relative; z-index: 1; }
+.p3-v { color: var(--navy); }
+.p3-c { color: var(--lav); }
+.p3-sq { width: 56px; padding: 0; justify-content: center; }
+
+.note { font: 500 11px/1.6 var(--mono); letter-spacing: .05em; margin-top: 4px; max-width: 70ch; }
+.pick { margin-top: 56px; border-top: 1px solid var(--lav); padding-top: 26px; font: 500 12px/1.7 var(--mono); letter-spacing: .05em; max-width: 90ch; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- the liquid trick: blur the shapes together, then snap the alpha back to a hard edge -->
+  <filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter>
+  <!-- the site's grade for the 3D option: brightness onto navy .. lavender -->
+  <filter id="duo" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".2126 .7152 .0722 0 0  .2126 .7152 .0722 0 0  .2126 .7152 .0722 0 0  0 0 0 1 0"/><feComponentTransfer><feFuncR type="linear" slope=".8745" intercept=".0431"/><feFuncG type="linear" slope=".8941" intercept=".0353"/><feFuncB type="linear" slope=".8784" intercept=".1216"/></feComponentTransfer></filter>
+</svg>
+
+<div class="wrap">
+  <h1>Bubble buttons</h1>
+  <p class="lede">round, soft, with depth. four ways to do it, from flat to fully 3d. hover and click them: the press states are real. the second row freezes the hover.</p>
+
+  <!-- 1 -->
+  <section class="opt">
+    <div class="opt-h"><b>1</b><h2>liquid</h2><p>a lavender bubble with a droplet on its end. hover and the droplet pulls away with a stretchy neck, like a drop of liquid about to fall. the eyes ride on the droplet.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="goo" href="#"><span class="shape"><i class="pill"></i><i class="drop"></i></span><span class="t">buy $mofo</span><span class="ic"><span class="eyes"><i></i><i></i></span></span></a>
+        <a class="goo goo-o" href="#"><span class="shape"><i class="pill"></i><i class="drop"></i></span><span class="t">get the extension</span><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a class="goo goo-o goo-sm" href="#"><span class="shape"><i class="pill"></i></span><span class="t">x</span></a>
+        <a class="goo goo-o goo-sm" href="#"><span class="shape"><i class="pill"></i></span><span class="t">telegram</span></a>
+      </div></div>
+      <div><div class="lbl">hover</div><div class="row">
+        <a class="goo is-hover" href="#"><span class="shape"><i class="pill"></i><i class="drop"></i></span><span class="t">buy $mofo</span><span class="ic"><span class="eyes"><i></i><i></i></span></span></a>
+        <a class="goo goo-o is-hover" href="#"><span class="shape"><i class="pill"></i><i class="drop"></i></span><span class="t">get the extension</span><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page</div><div class="row">
+        <a class="goo" href="#"><span class="shape"><i class="pill"></i><i class="drop"></i></span><span class="t">buy $mofo</span><span class="ic"><span class="eyes"><i></i><i></i></span></span></a>
+        <a class="goo goo-o goo-sm" href="#"><span class="shape"><i class="pill"></i></span><span class="t">get the extension</span></a>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="opt">
+    <div class="opt-h"><b>2</b><h2>jelly key</h2><p>a pushable bubble with a real side under it, drawn in the two brand colors only. hover makes it wobble like jelly, clicking pushes it down into its side.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="jelly" href="#">buy $mofo<span class="eyes"><i></i><i></i></span></a>
+        <a class="jelly jelly-o" href="#">get the extension</a>
+        <a class="jelly jelly-o jelly-sq" href="#">x</a>
+        <a class="jelly jelly-o" href="#">telegram</a>
+      </div></div>
+      <div><div class="lbl">pressed</div><div class="row">
+        <a class="jelly is-press" href="#">buy $mofo<span class="eyes"><i></i><i></i></span></a>
+        <a class="jelly jelly-o is-press" href="#">get the extension</a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page</div><div class="row">
+        <a class="jelly" href="#">buy $mofo<span class="eyes"><i></i><i></i></span></a>
+        <a class="jelly jelly-o" href="#">get the extension</a>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="opt">
+    <div class="opt-h"><b>3</b><h2>chrome bubble</h2><p>the ball's black chrome painted onto a bubble: a lavender rim, a soft highlight on top, the horizon line reflected through the middle. hover inflates it and the highlight slides across.</p></div>
+    <div class="stage">
+      <div><div class="lbl">rest</div><div class="row">
+        <a class="chrome chrome-l" href="#">buy $mofo<span class="eyes"><i></i><i></i></span></a>
+        <a class="chrome" href="#">get the extension</a>
+        <a class="chrome chrome-sq" href="#">x</a>
+        <a class="chrome" href="#">telegram</a>
+      </div></div>
+      <div><div class="lbl">hover</div><div class="row">
+        <a class="chrome chrome-l is-hover" href="#">buy $mofo<span class="eyes"><i></i><i></i></span></a>
+        <a class="chrome is-hover" href="#">get the extension</a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page</div><div class="row">
+        <a class="chrome" href="#">buy $mofo<span class="eyes"><i></i><i></i></span></a>
+        <a class="chrome chrome-l" href="#">get the extension</a>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="opt">
+    <div class="opt-h"><b>4</b><h2>real 3d</h2><p>each button is a real 3d bubble rendered live, in the same materials as the ball: lavender vinyl for the main one, black chrome for the rest. it tilts toward your cursor, swells on hover and squishes when you click. the main one has the eyes and watches the cursor.</p></div>
+    <div class="stage">
+      <div><div class="lbl">live · move the mouse over them</div><div class="row">
+        <a class="p3 p3-v" href="#" data-kind="vinyl" data-eyes="1"><span>buy $mofo</span></a>
+        <a class="p3 p3-c" href="#" data-kind="chrome"><span>get the extension</span></a>
+        <a class="p3 p3-c p3-sq" href="#" data-kind="chrome"><span>x</span></a>
+        <a class="p3 p3-c" href="#" data-kind="chrome"><span>telegram</span></a>
+      </div></div>
+      <div class="light"><div class="lbl">on the fear page</div><div class="row">
+        <a class="p3 p3-c" href="#" data-kind="chrome" data-eyes="1"><span>buy $mofo</span></a>
+        <a class="p3 p3-v" href="#" data-kind="vinyl"><span>get the extension</span></a>
+      </div></div>
+      <p class="note">costs a little gpu: one small renderer draws every button. on phones it would fall back to option 2 or 3.</p>
+    </div>
+  </section>
+
+  <p class="pick">tell me a number, or mix them.</p>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { makeStudioEnv } from '/src/engine/env.js';
+
+document.querySelectorAll('a[href="#"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+
+// ---- option 4: one offscreen renderer draws every 3D pill into its own little canvas
+const buttons = [...document.querySelectorAll('.p3')];
+const gl = new THREE.WebGLRenderer({ antialias: true, alpha: true, premultipliedAlpha: false });
+gl.setPixelRatio(Math.min(devicePixelRatio, 2));
+gl.toneMapping = THREE.NeutralToneMapping;
+gl.outputColorSpace = THREE.SRGBColorSpace;
+gl.setClearColor(0x000000, 0);
+const env = makeStudioEnv(gl);
+const LAV = new THREE.Color('#EAEDFF');
+
+function pillGeo(w, h) {
+  // a capsule stretched to the button: round ends, a fat round body, like a bubble
+  const r = h / 2;
+  const g = new THREE.CapsuleGeometry(r, Math.max(0.001, w - h), 16, 48);
+  g.rotateZ(Math.PI / 2);
+  g.scale(1, 1, 0.62);
+  return g;
+}
+function eyeGeo(H) {
+  const W = H * 0.52, S = H * 0.335;
+  const s = new THREE.Shape();
+  s.moveTo(-W / 2 - S / 2, -H / 2); s.lineTo(W / 2 - S / 2, -H / 2); s.lineTo(W / 2 + S / 2, H / 2); s.lineTo(-W / 2 + S / 2, H / 2); s.closePath();
+  return new THREE.ExtrudeGeometry(s, { depth: H * 0.12, bevelEnabled: true, bevelThickness: H * 0.03, bevelSize: H * 0.025, bevelSegments: 2 });
+}
+
+const items = buttons.map((el) => {
+  const c = document.createElement('canvas');
+  el.prepend(c);
+  const r = el.getBoundingClientRect();
+  const w = r.width / 56, h = 1; // world units: button height = 1
+  const scene = new THREE.Scene();
+  const cam = new THREE.OrthographicCamera(-(w + 36 / 56) / 2, (w + 36 / 56) / 2, (h + 36 / 56) / 2, -(h + 36 / 56) / 2, 0.1, 20);
+  cam.position.set(0, 0, 8);
+  const vinyl = el.dataset.kind === 'vinyl';
+  const mat = vinyl
+    ? new THREE.MeshPhysicalMaterial({ color: LAV, roughness: 0.28, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.06, envMap: env, envMapIntensity: 1.1, sheen: 0.4 })
+    : new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.07, metalness: 1, envMap: env, envMapIntensity: 1 });
+  const pivot = new THREE.Group();
+  const mesh = new THREE.Mesh(pillGeo(w * 0.94, h * 0.9), mat);
+  pivot.add(mesh);
+  const eyes = [];
+  if (el.dataset.eyes) {
+    const eg = eyeGeo(0.3);
+    const em = new THREE.MeshBasicMaterial({ color: vinyl ? 0x0b091f : 0xeaedff });
+    for (const dx of [-0.11, 0.11]) {
+      const e = new THREE.Mesh(eg, em);
+      e.position.set(w * 0.47 - 0.42 + dx, 0.04, 0.27);
+      pivot.add(e);
+      eyes.push(e);
+    }
+    // the label moves left to make room for the eyes
+    el.style.paddingRight = '64px';
+  }
+  scene.add(pivot, new THREE.AmbientLight(0xffffff, 0.5));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-2, 3, 5); scene.add(key);
+  const it = { el, c, ctx: c.getContext('2d'), scene, cam, pivot, mat, eyes, hover: 0, hoverT: 0, press: 0, pressT: 0, tilt: new THREE.Vector2(), tiltT: new THREE.Vector2(), w, h };
+  el.addEventListener('pointerenter', () => (it.hoverT = 1));
+  el.addEventListener('pointerleave', () => { it.hoverT = 0; it.pressT = 0; });
+  el.addEventListener('pointerdown', () => (it.pressT = 1));
+  addEventListener('pointerup', () => (it.pressT = 0));
+  return it;
+});
+
+let mx = innerWidth / 2, my = innerHeight / 2;
+addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; });
+
+let last = performance.now();
+function frame(t) {
+  const dt = Math.min(0.05, (t - last) / 1000); last = t;
+  for (const it of items) {
+    const r = it.el.getBoundingClientRect();
+    if (r.bottom < -40 || r.top > innerHeight + 40) continue;
+    const pr = gl.getPixelRatio();
+    const cw = Math.round((r.width + 36) * pr), ch = Math.round((r.height + 36) * pr);
+    if (it.c.width !== cw || it.c.height !== ch) { it.c.width = cw; it.c.height = ch; }
+    // springs: hover swells, press squishes, the whole bubble tilts toward the cursor
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    it.tiltT.set(THREE.MathUtils.clamp((my - cy) / 260, -1, 1), THREE.MathUtils.clamp((mx - cx) / 420, -1, 1));
+    it.tilt.lerp(it.tiltT, 1 - Math.pow(0.001, dt));
+    it.hover += (it.hoverT - it.hover) * (1 - Math.pow(0.0005, dt));
+    it.press += (it.pressT - it.press) * (1 - Math.pow(0.00001, dt));
+    const s = 1 + it.hover * 0.06 - it.press * 0.05;
+    it.pivot.scale.set(s + it.press * 0.04, s - it.press * 0.12, s);
+    it.pivot.rotation.set(it.tilt.x * (0.25 + it.hover * 0.2), it.tilt.y * (0.35 + it.hover * 0.25), 0);
+    it.mat.envMapRotation.set(0, t / 4000 + it.tilt.y * 0.8, 0);
+    for (const e of it.eyes) { e.rotation.y = it.tilt.y * 0.4; e.scale.y = (Math.sin(t / 900 + r.left) > 0.985 ? 0.15 : 1) * (1 + it.hover * 0.2); }
+    gl.setSize(r.width + 36, r.height + 36, false);
+    gl.render(it.scene, it.cam);
+    it.ctx.clearRect(0, 0, cw, ch);
+    it.ctx.drawImage(gl.domElement, 0, 0, cw, ch);
+  }
+  requestAnimationFrame(frame);
+}
+document.fonts.ready.then(() => requestAnimationFrame(frame));
+</script>
+</body>
+</html>
