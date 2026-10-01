@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · link your caller code</title>
+<meta name="description" content="the $MOFO holder program rewards holders with good calls on the MOFO caller board. link your wallet to your caller code once so we know who's who.">
+<meta property="og:title" content="MOFO · link your caller code">
+<meta property="og:description" content="hold $MOFO? link your caller code once so the good calls get paid to the right wallet.">
+<meta property="og:image" content="og.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/MartianMono-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: 'Archivo'; src: url('fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+@font-face { font-family: 'Martian Mono'; src: url('fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; font-display: swap; }
+
+:root {
+  --navy: #0B091F;
+  --lav: #EAEDFF;
+  --dim: rgba(234, 237, 255, .42);
+  --faint: rgba(234, 237, 255, .22);
+  --pad: clamp(16px, 2.2vw, 44px);
+  --gap: clamp(16px, 1.6vw, 40px);
+  --mono: 'Martian Mono', ui-monospace, Menlo, monospace;
+  --sans: 'Archivo', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --cut: 12px;
+  --ease: cubic-bezier(.2, .7, .1, 1);
+  --bp: clamp(14px, 1.3vw, 24px);
+}
+* { box-sizing: border-box; }
+html { background: var(--navy); scroll-behavior: smooth; }
+body { margin: 0; background: var(--navy); color: var(--lav); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--lav); color: var(--navy); }
+[hidden] { display: none !important; }
+
+.mono { font-family: var(--mono); }
+.lab { font: 500 10px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+
+/* ---------------------------------------------------------------- top bar (same as the board) */
+.bar {
+  position: sticky; top: 0; z-index: 30;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 12px var(--pad);
+  background: var(--navy);
+  border-bottom: 1px solid var(--lav);
+}
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; min-width: 0; }
+.brand img { width: 30px; height: 30px; outline: 1px solid var(--lav); display: block; flex: none; }
+.brand b { font-weight: 900; font-stretch: 125%; font-size: 20px; letter-spacing: -.02em; line-height: 1; }
+.brand span { font: 500 10px/1 var(--mono); letter-spacing: .14em; padding: 5px 7px 4px; border: 1px solid var(--lav); white-space: nowrap; }
+.nav { display: flex; gap: 2px; justify-content: center; min-width: 0; }
+.nav a { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-decoration: none; padding: 8px 10px 7px; border: 1px solid transparent; white-space: nowrap; }
+.nav a:hover { border-color: var(--lav); }
+.status { display: flex; align-items: center; gap: 10px; justify-content: flex-end; min-width: 0; }
+.status .upd { white-space: nowrap; }
+.tag { display: inline-flex; align-items: center; gap: 7px; font: 700 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 5px 7px 4px; border: 1px solid var(--lav); white-space: nowrap; }
+.tag.inv { background: var(--lav); color: var(--navy); }
+.tag.hatch { background: repeating-linear-gradient(-45deg, rgba(234,237,255,.22) 0 1px, transparent 1px 5px); }
+
+.eyes { display: inline-flex; gap: 2px; flex: none; }
+.eyes i { display: block; width: 4px; height: 10px; background: currentColor; transform: skewX(-18deg); animation: blink 4.2s infinite; }
+@keyframes blink { 0%, 92%, 100% { transform: skewX(-18deg) scaleY(1); } 95% { transform: skewX(-18deg) scaleY(.12); } }
+
+/* ---------------------------------------------------------------- buttons */
+.key {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 48px; padding: 0 22px 0 18px;
+  font: 800 15px/1 var(--sans); font-stretch: 118%; letter-spacing: -.01em;
+  text-decoration: none; text-transform: lowercase;
+  background: var(--lav); color: var(--navy);
+  border: 0; cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+  transition: transform .18s var(--ease);
+}
+.key:hover { transform: translateY(-2px); }
+.key.ghost { background: transparent; color: var(--lav); box-shadow: inset 0 0 0 1px var(--lav); clip-path: none; }
+.key .arr { font-family: var(--mono); font-weight: 700; }
+.key[disabled] { opacity: .55; cursor: progress; transform: none; }
+
+.cp {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 32px; padding: 0 11px;
+  font: 700 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  background: transparent; color: var(--lav);
+  border: 1px solid var(--lav); cursor: pointer; white-space: nowrap;
+}
+.cp:hover, .cp.ok { background: var(--lav); color: var(--navy); }
+.cp i { font-style: normal; display: inline-block; width: 9px; height: 9px; border: 1px solid currentColor; box-shadow: 2px -2px 0 -1px var(--navy), 2px -2px 0 0 currentColor; margin-top: 2px; }
+.cp:hover i, .cp.ok i { box-shadow: 2px -2px 0 -1px var(--lav), 2px -2px 0 0 currentColor; }
+.tx { background: none; border: 0; padding: 0; cursor: pointer; font: 500 10px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px; color: var(--lav); }
+.tx:hover { text-decoration-thickness: 2px; }
+
+/* ---------------------------------------------------------------- stage */
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--gap) * 1.5) calc(var(--gap) * 2);
+  padding: clamp(28px, 5vh, 72px) var(--pad) 0;
+}
+.intro { min-width: 0; container-type: inline-size; display: grid; gap: clamp(18px, 2.6vh, 30px); align-content: start; }
+.kick { display: flex; flex-wrap: wrap; gap: 6px; }
+h1 {
+  margin: 0;
+  font-weight: 900;
+  font-stretch: 125%;
+  font-size: clamp(46px, min(14.2cqi, 21vh), 300px);
+  line-height: .84;
+  letter-spacing: -.045em;
+  word-spacing: .14em;
+  text-transform: uppercase;
+}
+h1 span { display: block; white-space: nowrap; }
+h1 .l2 { color: transparent; -webkit-text-stroke: max(1.5px, .012em) var(--lav); }
+.lede { margin: 0; font-size: clamp(18px, 1.35vw, 30px); line-height: 1.3; font-weight: 500; letter-spacing: -.01em; max-width: 34ch; }
+
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--lav); border: 1px solid var(--lav); }
+.facts > div { background: var(--navy); min-width: 0; padding: clamp(12px, 1.1vw, 20px); display: grid; gap: 10px; align-content: space-between; }
+.facts .v { font-weight: 900; font-stretch: 125%; font-size: clamp(22px, 1.7vw, 44px); line-height: .95; letter-spacing: -.03em; text-transform: uppercase; overflow-wrap: anywhere; }
+.facts .v small { font: 600 .34em/1 var(--mono); letter-spacing: .06em; margin-left: .35em; vertical-align: .25em; }
+.facts .s { font: 500 9.5px/1.45 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.facts .inv { background: var(--lav); color: var(--navy); }
+.facts .inv .s { color: rgba(11, 9, 31, .6); }
+.fine { margin: 0; font: 500 clamp(11px, .58vw, 14px)/1.6 var(--mono); color: var(--dim); letter-spacing: .02em; max-width: 70ch; }
+
+/* ---------------------------------------------------------------- the flow panel */
+.panel { min-width: 0; border: 1px solid var(--lav); position: relative; }
+.rail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--lav); }
+.rail > div { min-width: 0; display: flex; align-items: stretch; color: var(--dim); }
+.rail > div + div { border-left: 1px solid var(--lav); }
+.rail b { display: grid; place-items: center; padding: 0 10px; font: 700 10px/1 var(--mono); letter-spacing: .1em; border-right: 1px solid var(--faint); }
+.rail > div > span { flex: 1 1 auto; min-width: 0; padding: 12px 12px 11px; font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rail .on { background: var(--lav); color: var(--navy); }
+.rail .on b { border-right-color: rgba(11, 9, 31, .25); }
+.rail .did { color: var(--lav); background: repeating-linear-gradient(-45deg, rgba(234,237,255,.14) 0 1px, transparent 1px 5px); }
+
+.step { display: grid; }
+.sec { padding: var(--bp); min-width: 0; }
+.sec + .sec { border-top: 1px solid var(--lav); }
+.sec > .lab { display: block; color: var(--dim); margin-bottom: 12px; }
+.h2 { margin: 0 0 12px; font-weight: 900; font-stretch: 125%; font-size: clamp(28px, 2.4vw, 60px); line-height: .9; letter-spacing: -.03em; text-transform: uppercase; }
+.p { margin: 0; font-size: clamp(15px, .82vw, 19px); line-height: 1.5; max-width: 60ch; }
+.p + .p { margin-top: 8px; }
+.p b { white-space: nowrap; font-family: var(--mono); font-size: .88em; font-weight: 700; letter-spacing: .02em; }
+
+/* step 1: the code field */
+.field { display: grid; grid-template-columns: minmax(0, 1fr) auto; border: 1px solid var(--lav); margin-top: 18px; }
+.field:focus-within { outline: 1px solid var(--lav); outline-offset: 3px; }
+.field input {
+  min-width: 0; width: 100%;
+  background: transparent; color: var(--lav);
+  border: 0; outline: 0; border-radius: 0;
+  padding: 0 clamp(14px, 1.3vw, 24px);
+  min-height: clamp(64px, 6vw, 104px);
+  font: 700 clamp(22px, 2.1vw, 48px)/1 var(--mono);
+  letter-spacing: .04em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.field input::placeholder { color: rgba(234, 237, 255, .24); }
+.field .key { min-height: 100%; clip-path: none; padding: 0 clamp(20px, 1.8vw, 36px); font-size: clamp(15px, 1vw, 20px); }
+.field .key:hover { transform: none; background: #fff; }
+
+.where { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; border: 1px solid var(--faint); }
+.where > div { min-width: 0; padding: 12px 12px 11px; display: grid; gap: 7px; }
+.where > div + div { border-left: 1px solid var(--faint); }
+.where b { font-weight: 900; font-stretch: 125%; font-size: clamp(26px, 2.8vw, 96px); line-height: .9; letter-spacing: -.03em; }
+.where span { font-size: clamp(14px, .95vw, 26px); line-height: 1.3; font-weight: 500; letter-spacing: -.01em; max-width: 24ch; }
+.where > div { align-content: space-between; gap: 14px; padding: clamp(12px, 1vw, 20px); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; align-items: center; }
+.chips .lab { color: var(--dim); margin-right: 4px; }
+.chip { cursor: pointer; background: transparent; color: var(--lav); }
+.chip:hover { background: var(--lav); color: var(--navy); }
+
+/* errors: shown as the server says them */
+.msg { display: grid; grid-template-columns: auto minmax(0, 1fr); border: 1px solid var(--lav); margin-top: 16px; }
+.msg b { display: grid; place-items: center; padding: 0 12px; background: var(--lav); color: var(--navy); font: 700 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.msg p { margin: 0; padding: 13px 14px 12px; font: 500 13px/1.5 var(--mono); letter-spacing: .01em; min-width: 0; overflow-wrap: anywhere; background: repeating-linear-gradient(-45deg, rgba(234,237,255,.08) 0 1px, transparent 1px 6px); }
+
+/* step 2: the exact amount */
+.who { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.who .tag { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.amt { container-type: inline-size; background: var(--lav); color: var(--navy); padding: var(--bp); display: grid; gap: 14px; }
+.amt .lab { color: rgba(11, 9, 31, .65); }
+.amt-v {
+  font: 700 clamp(20px, 6.4cqi, 92px)/1 var(--mono);
+  letter-spacing: -.035em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.amt-v span + span { margin-left: .2em; }
+.amt-v .pt { margin-left: 0 !important; }
+.amt-v .pt + span { margin-left: 0; }
+.amt-f { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.amt-f .sym { font-weight: 900; font-stretch: 125%; font-size: clamp(18px, 1.4vw, 32px); letter-spacing: -.02em; line-height: 1; }
+.amt-f .fine { color: rgba(11, 9, 31, .6); flex: 1 1 18ch; min-width: 0; }
+.amt .cp { color: var(--navy); border-color: var(--navy); }
+.amt .cp:hover, .amt .cp.ok { background: var(--navy); color: var(--lav); }
+.amt .cp i { box-shadow: 2px -2px 0 -1px var(--lav), 2px -2px 0 0 currentColor; }
+.amt .cp:hover i, .amt .cp.ok i { box-shadow: 2px -2px 0 -1px var(--navy), 2px -2px 0 0 currentColor; }
+.amt.dead { background: repeating-linear-gradient(-45deg, rgba(234,237,255,.14) 0 1px, transparent 1px 5px); color: var(--dim); box-shadow: inset 0 0 0 1px var(--faint); }
+.amt.dead .amt-v { text-decoration: line-through; text-decoration-thickness: 2px; }
+.amt.dead .lab, .amt.dead .amt-f .fine { color: var(--dim); }
+.amt.dead .cp { display: none; }
+
+.kv { display: grid; border-bottom: 1px solid var(--lav); }
+.kv > div { display: grid; grid-template-columns: 11ch minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 12px var(--bp); min-width: 0; }
+.kv > div + div { border-top: 1px solid var(--faint); }
+.kv .lab { color: var(--dim); }
+.kv .val { font: 600 clamp(12px, .9vw, 17px)/1.4 var(--mono); letter-spacing: .01em; overflow-wrap: anywhere; min-width: 0; }
+.kv .val small { font: 500 10px/1 var(--mono); letter-spacing: .1em; color: var(--dim); margin-left: 8px; text-transform: uppercase; white-space: nowrap; }
+
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--lav); }
+.trio > div { min-width: 0; padding: var(--bp); display: grid; gap: 12px; align-content: space-between; }
+.trio > div + div { border-left: 1px solid var(--lav); }
+.trio .lab { color: var(--dim); }
+.trio .tv { font-weight: 900; font-stretch: 125%; font-size: clamp(20px, 1.6vw, 40px); line-height: .92; letter-spacing: -.03em; text-transform: uppercase; }
+.trio .clock { background: var(--lav); color: var(--navy); }
+.trio .clock .lab { color: rgba(11, 9, 31, .65); }
+.cd { font: 700 clamp(22px, 1.9vw, 46px)/1 var(--mono); letter-spacing: -.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cd i { font-style: normal; font-size: .5em; letter-spacing: 0; margin: 0 .12em 0 .04em; vertical-align: .1em; }
+.trio .clock.low { background: repeating-linear-gradient(-45deg, rgba(11,9,31,.16) 0 1px, transparent 1px 5px), var(--lav); }
+
+.rules { list-style: none; margin: 0; padding: 0; display: grid; }
+.rules li { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: stretch; min-height: 46px; }
+.rules li + li { border-top: 1px solid var(--faint); }
+.rules b { display: grid; place-items: center; font: 700 10px/1 var(--mono); letter-spacing: .1em; border-right: 1px solid var(--faint); }
+.rules span { padding: 12px 14px 11px; font-size: clamp(14.5px, .8vw, 19px); line-height: 1.45; min-width: 0; }
+.rules strong { font-weight: 800; font-stretch: 112%; }
+
+.watch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 12px var(--bp); border-top: 1px solid var(--lav); }
+.watch .w { display: inline-flex; align-items: center; gap: 10px; font: 700 10px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+.watch .chk { font: 500 10px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin-right: auto; }
+
+/* step 3: linked */
+.done { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--lav); color: var(--navy); padding: var(--bp); gap: 16px; }
+.done .lab { color: rgba(11, 9, 31, .65); }
+.done .big { font-weight: 900; font-stretch: 125%; font-size: clamp(52px, 5.4vw, 150px); line-height: .82; letter-spacing: -.045em; text-transform: uppercase; }
+.done .wl { font: 700 clamp(13px, 1.05vw, 20px)/1.4 var(--mono); letter-spacing: .01em; overflow-wrap: anywhere; }
+.done .row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.done .cp { color: var(--navy); border-color: var(--navy); }
+.done .cp:hover, .done .cp.ok { background: var(--navy); color: var(--lav); }
+.done .cp i { box-shadow: 2px -2px 0 -1px var(--lav), 2px -2px 0 0 currentColor; }
+.done .cp:hover i, .done .cp.ok i { box-shadow: 2px -2px 0 -1px var(--navy), 2px -2px 0 0 currentColor; }
+.done a.ex { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-underline-offset: 4px; }
+
+.duo { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); border-bottom: 1px solid var(--lav); }
+.duo > div { min-width: 0; padding: var(--bp); display: grid; gap: 12px; align-content: space-between; }
+.duo > div + div { border-left: 1px solid var(--lav); }
+.duo .lab { color: var(--dim); }
+.duo .bv { font-weight: 900; font-stretch: 125%; font-size: clamp(30px, 2.6vw, 64px); line-height: .9; letter-spacing: -.035em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.duo .bv small { font: 600 .3em/1 var(--mono); letter-spacing: .08em; margin-left: .35em; vertical-align: .3em; }
+.el { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.el .tag { font-size: 11px; padding: 7px 9px 6px; }
+.el .tag.no { border-style: dashed; }
+.why { margin: 0; font: 500 12px/1.55 var(--mono); letter-spacing: .01em; }
+.acts { display: flex; flex-wrap: wrap; gap: 10px; padding: var(--bp); align-items: center; }
+
+/* ---------------------------------------------------------------- footer */
+.foot {
+  margin: calc(var(--gap) * 2) var(--pad) 0;
+  border-top: 1px solid var(--lav);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  padding: clamp(28px, 5vh, 64px) 0 clamp(28px, 4vh, 48px);
+}
+.foot h2 { margin: 0 0 14px; font-weight: 900; font-stretch: 125%; font-size: clamp(40px, 5vw, 150px); line-height: .84; letter-spacing: -.045em; text-transform: uppercase; }
+.foot p { margin: 0 0 20px; font-size: clamp(16px, 1.1vw, 22px); max-width: 44ch; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: flex-end; }
+.links a { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-underline-offset: 4px; }
+
+/* ---------------------------------------------------------------- layouts */
+@media (min-width: 1100px) {
+  .stage { grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); align-items: start; }
+  /* on step 1 the panel is as tall as the intro next to it and its last block takes the slack */
+  #flow:has(> #s1:not([hidden])) { align-self: stretch; display: flex; flex-direction: column; }
+  #s1 { flex: 1 1 auto; grid-template-rows: auto 1fr; }
+  #s1 .sec:last-child { display: grid; grid-template-rows: auto 1fr; }
+  #s1 .sec:last-child > .lab { margin-bottom: 12px; }
+}
+@media (min-width: 2300px) {
+  .stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 1099px) {
+  /* on one column the form comes right after the headline */
+  .intro { display: contents; }
+  .kick { order: 1; } h1 { order: 2; } .lede { order: 3; } #flow { order: 4; } .facts { order: 5; } .intro .fine { order: 6; }
+  .stage { row-gap: 22px; }
+  h1 { font-size: min(12.8vw, 150px); }
+  #flow { margin-bottom: 10px; }
+}
+@media (max-width: 1100px) {
+  .nav { display: none; }
+  .bar { grid-template-columns: auto minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .brand span { display: none; }
+  .status .upd { display: none; }
+  .lede { font-size: 18px; }
+  .rail .lg { display: none; }
+  .field { grid-template-columns: minmax(0, 1fr); }
+  .field .key { min-height: 52px; border-top: 1px solid var(--lav); }
+  .field input { font-size: 22px; }
+  .where { grid-template-columns: minmax(0, 1fr); }
+  .where > div + div { border-left: 0; border-top: 1px solid var(--faint); }
+  .kv > div { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "l c" "v v"; row-gap: 8px; }
+  .kv .lab { grid-area: l; } .kv .val { grid-area: v; } .kv .cp { grid-area: c; }
+  .trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .trio .clock { grid-column: 1 / -1; order: -1; border-bottom: 1px solid var(--lav); }
+  .trio > div + div { border-left: 0; }
+  .trio > div:last-child { border-left: 1px solid var(--lav); }
+  .duo { grid-template-columns: minmax(0, 1fr); }
+  .duo > div + div { border-left: 0; border-top: 1px solid var(--lav); }
+  .acts .key { flex: 1 1 auto; }
+  .foot { grid-template-columns: minmax(0, 1fr); }
+  .foot .key { width: 100%; }
+  .links { justify-content: flex-start; }
+}
+@media (min-width: 701px) { .rail .sh { display: none; } }
+
+@media (prefers-reduced-motion: reduce) { .eyes i { animation: none; } html { scroll-behavior: auto; } .key { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="./" aria-label="MOFO home"><img src="logo.svg" alt=""><b>MOFO</b><span>HOLDERS</span></a>
+  <nav class="nav" aria-label="pages">
+    <a href="./">home</a><a href="calls.html">the board</a><a href="calls.html#how">how points work</a>
+  </nav>
+  <div class="status">
+    <span class="lab upd">robinhood chain</span>
+    <span class="tag" id="src">chain 4663</span>
+  </div>
+</header>
+
+<div class="stage">
+  <section class="intro" aria-label="about">
+    <div class="kick" id="kick"><span class="tag">$mofo holder program</span><span class="tag inv">one time</span></div>
+    <h1 aria-label="Link your code"><span>Link your</span><span class="l2">code</span></h1>
+    <p class="lede">the $MOFO holder program rewards holders with good calls on the MOFO caller board. link your wallet once so we know who's who.</p>
+    <div class="facts">
+      <div class="inv"><span class="s">you send</span><span class="v">~1<small>$MOFO</small></span></div>
+      <div><span class="s">time to send it</span><span class="v">30<small>min</small></span></div>
+      <div><span class="s">wallet connect</span><span class="v">none</span></div>
+      <div><span class="s">things to sign</span><span class="v">zero</span></div>
+    </div>
+    <p class="fine">the server watches the $MOFO token on robinhood chain. when a transfer with your exact amount lands, the wallet that sent it gets linked to your code. keep your code to yourself: anyone who has it can look up the wallet it's linked to.</p>
+  </section>
+
+  <section class="panel" id="flow" aria-label="link your caller code">
+    <div class="rail" id="rail">
+      <div data-r="1"><b>01</b><span><span class="lg">your code</span><span class="sh">code</span></span></div>
+      <div data-r="2"><b>02</b><span><span class="lg">send $mofo</span><span class="sh">send</span></span></div>
+      <div data-r="3"><b>03</b><span>linked</span></div>
+    </div>
+
+    <!-- step 1 -->
+    <form class="step" id="s1" novalidate autocomplete="off">
+      <div class="sec">
+        <h2 class="h2">Your caller code</h2>
+        <p class="p">it's in the MOFO extension: open settings and scroll to THE CALL. it looks like <b>MOFO-7K2Q-9XWD</b>. dashes are optional.</p>
+        <div class="field">
+          <input id="code" name="code" inputmode="text" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="MOFO-XXXX-XXXX" aria-label="caller code">
+          <button class="key" id="go" type="submit">check code <span class="arr">→</span></button>
+        </div>
+        <div class="msg" id="err1" role="alert" hidden><b>heads up</b><p></p></div>
+        <div class="chips" id="chips" hidden>
+          <span class="lab">demo codes</span>
+          <button type="button" class="tag chip" data-c="MOFO-7K2Q-9XWD">new code</button>
+          <button type="button" class="tag chip" data-c="MOFO-L1NK-ED00">already linked</button>
+          <button type="button" class="tag chip" data-c="MOFO-0000-0000">unknown code</button>
+          <button type="button" class="tag chip" data-c="MOFO-500N-0000">before launch</button>
+        </div>
+      </div>
+      <div class="sec">
+        <span class="lab">what happens next</span>
+        <div class="where">
+          <div><b>01</b><span>we check the code and show you an exact amount of $MOFO</span></div>
+          <div><b>02</b><span>you send that amount from your wallet, any wallet app works</span></div>
+          <div><b>03</b><span>the chain shows it landed and your wallet is linked</span></div>
+        </div>
+      </div>
+    </form>
+
+    <!-- step 2 -->
+    <div class="step" id="s2" hidden>
+      <div class="sec">
+        <div class="who"><span class="tag" id="s2code"></span><span class="tag inv" id="s2handle"></span><button type="button" class="tx" id="s2back">use a different code</button></div>
+      </div>
+      <div class="amt" id="amt">
+        <span class="lab">send exactly</span>
+        <div class="amt-v" id="amtv" aria-live="off"></div>
+        <div class="amt-f">
+          <span class="sym">$MOFO</span>
+          <button type="button" class="cp" data-copy="amount"><i></i>copy amount</button>
+          <span class="fine">every digit counts, so paste it.</span>
+        </div>
+      </div>
+      <div class="kv">
+        <div><span class="lab">to</span><span class="val" id="to"></span><button type="button" class="cp" data-copy="to"><i></i>copy</button></div>
+        <div><span class="lab">token</span><span class="val" id="token"></span><button type="button" class="cp" data-copy="token"><i></i>copy</button></div>
+      </div>
+      <div class="trio">
+        <div><span class="lab">chain</span><span class="tv">robinhood<br>chain</span></div>
+        <div><span class="lab">chain id</span><span class="tv" id="cid">4663</span></div>
+        <div class="clock" id="clk"><span class="lab" id="clkl">expires in</span><span class="cd" id="cd">30<i>:</i>00</span></div>
+      </div>
+      <div class="msg" id="exp" hidden style="margin:0;border-width:0 0 1px"><b>expired</b><p>this amount timed out. if you already sent it, give it a minute, we're still looking. otherwise get a fresh amount. <button type="button" class="tx" id="again" style="margin-left:6px">get a new amount</button></p></div>
+      <div class="sec">
+        <span class="lab">three rules</span>
+        <ol class="rules">
+          <li><b>01</b><span><strong>send from your own wallet.</strong> an exchange withdrawal comes from the exchange's wallet, so that's the one that would get linked.</span></li>
+          <li><b>02</b><span><strong>send exactly this amount.</strong> a rounded number can't be matched to your code.</span></li>
+          <li><b>03</b><span><strong>it goes into the daily pot.</strong> the $MOFO you send gets paid out to the day's top callers.</span></li>
+        </ol>
+      </div>
+      <div class="msg" id="err2" role="alert" hidden style="margin:0 var(--bp) var(--bp)"><b>heads up</b><p></p></div>
+      <div class="watch">
+        <span class="w"><span class="eyes"><i></i><i></i></span>watching the chain</span>
+        <span class="chk" id="chk">checking every 5s</span>
+      </div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step" id="s3" hidden>
+      <div class="done">
+        <span class="lab" id="s3who">linked</span>
+        <span class="big">Linked</span>
+        <span class="wl" id="wl"></span>
+        <div class="row">
+          <button type="button" class="cp" data-copy="wallet"><i></i>copy wallet</button>
+          <a class="ex" id="ex" href="#" target="_blank" rel="noopener">view on explorer ↗</a>
+        </div>
+      </div>
+      <div class="duo">
+        <div><span class="lab">$MOFO balance</span><span class="bv" id="bal">0</span></div>
+        <div><span class="lab">holder program</span><div class="el" id="el"></div><p class="why" id="why" hidden></p></div>
+      </div>
+      <div class="msg" id="err3" role="alert" hidden style="margin:var(--bp) var(--bp) 0"><b>heads up</b><p></p></div>
+      <div class="acts">
+        <a class="key" href="calls.html">see the board <span class="arr">→</span></a>
+        <button type="button" class="key ghost" id="another">link another wallet</button>
+        <button type="button" class="tx" id="s3back" style="margin-left:auto">use a different code</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="foot">
+  <div>
+    <h2>The<br>board</h2>
+    <p>see who's calling it right today, who's leading the week and what got paid out.</p>
+    <a class="key" href="calls.html">see the board <span class="arr">→</span></a>
+  </div>
+  <nav class="links" aria-label="links">
+    <a href="./">mindoverfomo.tools</a>
+    <a href="privacy.html">privacy</a>
+    <a href="terms.html">terms</a>
+    <a href="program.html">program rules</a>
+    <a href="https://x.com/mindoverfomo" rel="noopener">x</a>
+    <a href="https://t.me/mindoverfomo" rel="noopener">telegram</a>
+  </nav>
+</footer>
+
+<script>
+(() => {
+  const FALLBACK = 'https://api.mindoverfomo.tools/game';
+  const EXPLORER = 'https://robinhoodchain.blockscout.com/address/';
+  const CHAIN_NAME = { 4663: 'robinhood chain' };
+  const POLL_MS = 5000;
+  const qs = new URLSearchParams(location.search);
+  const DEMO = qs.get('demo') === '1';
+  const $ = (id) => document.getElementById(id);
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const num = (v) => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+  const trim = (s) => s.indexOf('.') < 0 ? s : s.replace(/0+$/, '').replace(/\.$/, '');
+
+  const st = { step: 1, code: '', handle: null, verify: null, wallet: null, balance: null, eligible: false, why: null, prevWallet: null, lastCheck: 0, checkFailed: false, busy: false };
+  let pollT = null, base = null;
+
+  // ------------------------------------------------------------ the code: MOFO-XXXX-XXXX, dashes optional
+  function norm(raw) {
+    let s = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (s.length === 12 && s.startsWith('MOFO')) s = s.slice(4);
+    if (s.length !== 8) return null;
+    return 'MOFO-' + s.slice(0, 4) + '-' + s.slice(4);
+  }
+  // uppercase while typing and put the dashes where they go, keeping the caret after the same character
+  function shape(el) {
+    const v = el.value, pos = el.selectionStart == null ? v.length : el.selectionStart;
+    const before = v.slice(0, pos).toUpperCase().replace(/[^A-Z0-9]/g, '').length;
+    let s = v.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    let pre = '';
+    if ('MOFO'.startsWith(s.slice(0, 4)) && (s.length > 4 || s.length === 4)) { pre = s.slice(0, 4); s = s.slice(4); }
+    s = s.slice(0, 8);
+    let out = pre, map = [];
+    for (let i = 0; i < pre.length; i++) map.push(i + 1);
+    for (let i = 0; i < s.length; i++) {
+      if ((i === 0 && pre) || i === 4) out += '-';
+      out += s[i];
+      map.push(out.length);
+    }
+    if (out === v) return;
+    el.value = out;
+    const c = before ? (map[before - 1] || out.length) : 0;
+    try { el.setSelectionRange(c, c); } catch (e) { /* not focused */ }
+  }
+
+  // ------------------------------------------------------------ api
+  async function apiBase() {
+    if (base) return base;
+    try {
+      const r = await fetch('ext-config.json', { cache: 'no-store' });
+      const j = await r.json();
+      if (j && typeof j.game === 'string' && /^https:\/\//.test(j.game)) base = j.game.replace(/\/+$/, '');
+    } catch (e) { /* no config: use the default */ }
+    return base || FALLBACK;
+  }
+  async function api(method, path, body) {
+    if (DEMO) return fake(method, path, body);
+    let r, j;
+    const ctl = new AbortController();
+    const to = setTimeout(() => ctl.abort(), 12000);
+    try {
+      r = await fetch((await apiBase()) + path, {
+        method, cache: 'no-store', signal: ctl.signal,
+        headers: body ? { 'Content-Type': 'application/json' } : undefined,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (e) {
+      throw new Error("can't reach the MOFO server right now. try again in a minute.");
+    } finally { clearTimeout(to); }
+    try { j = await r.json(); } catch (e) { throw new Error('the MOFO server sent back something odd (' + r.status + '). try again in a minute.'); }
+    if (!j || !j.ok) throw new Error((j && j.error) || 'something went wrong (' + r.status + '). try again in a minute.');
+    return j;
+  }
+
+  // ------------------------------------------------------------ demo: a fake server so the whole flow can be reviewed
+  const demoDb = {};
+  const rhex = (n) => Array.from({ length: n }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
+  const DEMO_POT = '0x7a3f09c2d81be4f56a0e2b9c13d4f8e6a2b10c5d', DEMO_TOKEN = '0xd1d2c4a09b8e3f7a61c05e2d94b3a8f7c0e1f62b';
+  function fake(method, path, body) {
+    return new Promise((res, rej) => setTimeout(() => {
+      const code = method === 'POST' ? norm(body && body.code) : norm(new URL(path, location.href).searchParams.get('code'));
+      if (!code || code === 'MOFO-0000-0000') return rej(new Error('Unknown caller code. Copy it again from MOFO settings, THE CALL section.'));
+      let rec = demoDb[code];
+      if (!rec) {
+        rec = demoDb[code] = code === 'MOFO-L1NK-ED00'
+          ? { handle: 'chartmonk', wallet: '0x3f9a52c8e07d41b6a9f0d2e3c4b5a6978e1dc21e', balance: '4200', eligible: false, why: 'Hold at least 10,000 $MOFO in your verified wallet to win.', verify: null, startedAt: 0 }
+          : { handle: 'sol_wizard', wallet: null, balance: null, eligible: false, why: null, verify: null, startedAt: 0 };
+      }
+      if (method === 'POST') {
+        if (code === 'MOFO-500N-0000') return rej(new Error('Wallet verification opens when $MOFO launches.'));
+        const tail = String(Math.floor(Math.random() * 1e12) + 1).padStart(12, '0');
+        const amount = trim('1.000000' + tail);
+        rec.verify = { amount, amountWei: '1000000' + tail, to: DEMO_POT, token: DEMO_TOKEN, chainId: 4663, expiresAt: Math.floor(Date.now() / 1000) + 1800 };
+        rec.startedAt = Date.now();
+        return res({ ok: true, handle: rec.handle, verify: rec.verify });
+      }
+      if (rec.verify && Date.now() - rec.startedAt > 8000) {
+        rec.wallet = '0x' + rhex(40); rec.balance = '25000'; rec.eligible = true; rec.why = null; rec.verify = null;
+      }
+      res({ ok: true, handle: rec.handle, linked: !!rec.wallet, wallet: rec.wallet, balance: rec.balance, eligible: rec.eligible, why: rec.why, verify: rec.verify });
+    }, 380));
+  }
+
+  // ------------------------------------------------------------ ui
+  function err(n, text) {
+    const box = $('err' + n);
+    if (!text) { box.hidden = true; return; }
+    box.querySelector('p').textContent = text;
+    box.hidden = false;
+  }
+  function go(step) {
+    st.step = step;
+    [1, 2, 3].forEach((n) => { $('s' + n).hidden = n !== step; });
+    document.querySelectorAll('#rail > div').forEach((el) => {
+      const r = +el.dataset.r;
+      el.className = r === step ? 'on' : r < step ? 'did' : '';
+    });
+    if (step !== 2) stopPoll();
+    [1, 2, 3].forEach((n) => err(n, null));
+    if (matchMedia('(max-width: 1100px)').matches && step !== 1) {
+      const top = $('flow').getBoundingClientRect().top + scrollY - 70;
+      if (scrollY > top || top - scrollY > innerHeight * .5) scrollTo({ top, behavior: 'smooth' });
+    }
+    save();
+  }
+  function save() {
+    try { if (!DEMO) sessionStorage.setItem('mofo-link-code', st.code || ''); } catch (e) { /* storage off */ }
+  }
+
+  function amountHtml(a) {
+    const s = String(a);
+    const [whole, frac] = s.split('.');
+    let h = '<span>' + whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</span>';
+    if (frac) {
+      h += '<span class="pt">.</span>';
+      h += frac.match(/.{1,3}/g).map((g) => '<span>' + g + '</span>').join('');
+    }
+    return h;
+  }
+  function tokens(v) {
+    const n = num(v);
+    if (n >= 1e9) return trim((n / 1e9).toFixed(2)) + 'B';
+    if (n >= 100) return Math.round(n).toLocaleString('en-US');
+    return trim(n.toFixed(2));
+  }
+
+  function showSend() {
+    const v = st.verify;
+    $('s2code').textContent = st.code;
+    $('s2handle').textContent = st.handle ? 'caller · ' + st.handle : 'caller found';
+    $('amtv').innerHTML = amountHtml(v.amount);
+    $('to').textContent = v.to || '';
+    $('token').innerHTML = '';
+    $('token').textContent = v.token || '';
+    const sm = document.createElement('small'); sm.textContent = '$MOFO'; $('token').appendChild(sm);
+    $('cid').textContent = v.chainId || 4663;
+    $('amt').classList.remove('dead');
+    $('exp').hidden = true;
+    go(2);
+    tick();
+    startPoll();
+  }
+  function showLinked() {
+    $('s3who').textContent = st.code + (st.handle ? ' · ' + st.handle : '');
+    $('wl').textContent = st.wallet || '';
+    $('ex').href = EXPLORER + (st.wallet || '');
+    $('bal').innerHTML = tokens(st.balance) + '<small>$MOFO</small>';
+    $('el').innerHTML = st.eligible
+      ? '<span class="tag inv"><span class="eyes"><i></i><i></i></span>eligible</span>'
+      : '<span class="tag no">not eligible yet</span>';
+    $('why').hidden = !st.why;
+    $('why').textContent = st.why || '';
+    go(3);
+  }
+  function take(j) {
+    st.handle = j.handle || st.handle;
+    st.wallet = j.wallet || null;
+    st.balance = j.balance;
+    st.eligible = !!j.eligible;
+    st.why = j.why || null;
+  }
+
+  function busy(btn, on, label) {
+    st.busy = on;
+    btn.disabled = on;
+    if (label != null) btn.innerHTML = label;
+  }
+
+  // step 1: check the code, then start (or resume, or skip straight to linked)
+  async function check(e) {
+    if (e) e.preventDefault();
+    if (st.busy) return;
+    err(1, null);
+    const code = norm($('code').value);
+    if (!code) { err(1, "that doesn't look like a caller code. it's MOFO and then 8 letters and numbers, like MOFO-7K2Q-9XWD."); $('code').focus(); return; }
+    $('code').value = code;
+    st.code = code;
+    const btn = $('go'), label = btn.innerHTML;
+    busy(btn, true, 'checking <span class="arr">…</span>');
+    try {
+      const s = await api('GET', '/v1/link/status?code=' + encodeURIComponent(code));
+      take(s);
+      if (s.linked && s.wallet) { st.prevWallet = s.wallet; showLinked(); return; }
+      if (s.verify && num(s.verify.expiresAt) > Date.now() / 1000 + 60) { st.verify = s.verify; st.prevWallet = null; showSend(); return; }
+      st.prevWallet = null;
+      await start(1);
+    } catch (x) {
+      err(1, x.message);
+    } finally { busy(btn, false, label); }
+  }
+  async function start(from) {
+    const j = await apiOrShow(from, () => api('POST', '/v1/link/start', { code: st.code }));
+    if (!j) return;
+    st.handle = j.handle || st.handle;
+    st.verify = j.verify;
+    showSend();
+  }
+  async function apiOrShow(from, fn) {
+    try { return await fn(); }
+    catch (x) { if (from === 1) throw x; err(from, x.message); return null; }
+  }
+
+  // step 2: poll until the transfer lands
+  function startPoll() { stopPoll(); st.lastCheck = Date.now(); pollT = setInterval(poll, POLL_MS); }
+  function stopPoll() { if (pollT) clearInterval(pollT); pollT = null; }
+  async function poll() {
+    if (st.step !== 2) return stopPoll();
+    const left = num(st.verify && st.verify.expiresAt) - Date.now() / 1000;
+    if (left < -180) { stopPoll(); $('chk').textContent = 'stopped looking'; return; }
+    try {
+      const j = await api('GET', '/v1/link/status?code=' + encodeURIComponent(st.code));
+      st.lastCheck = Date.now(); st.checkFailed = false;
+      const w = (j.wallet || '').toLowerCase(), was = (st.prevWallet || '').toLowerCase();
+      if (j.linked && w && (w !== was || !j.verify)) { take(j); st.prevWallet = j.wallet; showLinked(); }
+    } catch (x) { st.checkFailed = true; }
+  }
+
+  function tick() {
+    if (st.step !== 2 || !st.verify) return;
+    const left = Math.floor(num(st.verify.expiresAt) - Date.now() / 1000);
+    const clk = $('clk');
+    if (left > 0) {
+      const m = Math.floor(left / 60), s = left % 60;
+      $('cd').innerHTML = (m >= 60 ? Math.floor(m / 60) + '<i>:</i>' + pad2(m % 60) : pad2(m)) + '<i>:</i>' + pad2(s);
+      clk.classList.toggle('low', left < 300);
+      $('clkl').textContent = 'expires in';
+    } else {
+      $('cd').innerHTML = '00<i>:</i>00';
+      $('clkl').textContent = 'expired';
+      $('amt').classList.add('dead');
+      $('exp').hidden = false;
+    }
+    if (pollT) {
+      const ago = Math.max(0, Math.round((Date.now() - st.lastCheck) / 1000));
+      $('chk').textContent = st.checkFailed ? "couldn't check, trying again" : 'checked ' + (ago < 2 ? 'just now' : ago + 's ago') + ' · every 5s';
+    }
+  }
+
+  // ------------------------------------------------------------ copy
+  async function copy(text, btn) {
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      const t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;left:-9999px;top:0';
+      document.body.appendChild(t); t.select();
+      try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
+      t.remove();
+    }
+    const old = btn.innerHTML;
+    btn.classList.add('ok');
+    btn.innerHTML = ok ? 'copied' : 'copy failed';
+    setTimeout(() => { btn.classList.remove('ok'); btn.innerHTML = old; }, 1400);
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-copy]');
+    if (!b) return;
+    const k = b.dataset.copy, v = st.verify || {};
+    const text = k === 'amount' ? v.amount : k === 'to' ? v.to : k === 'token' ? v.token : k === 'wallet' ? st.wallet : '';
+    if (text) copy(String(text), b);
+  });
+
+  // ------------------------------------------------------------ wire up
+  const input = $('code');
+  input.addEventListener('input', () => { shape(input); err(1, null); });
+  $('s1').addEventListener('submit', check);
+  const back = () => { stopPoll(); go(1); input.focus(); };
+  $('s2back').addEventListener('click', back);
+  $('s3back').addEventListener('click', back);
+  $('again').addEventListener('click', () => start(2));
+  $('another').addEventListener('click', async (e) => {
+    const b = e.currentTarget, label = b.innerHTML;
+    if (st.busy) return;
+    busy(b, true, 'one sec…');
+    st.prevWallet = st.wallet;
+    await start(3);
+    busy(b, false, label);
+  });
+
+  if (DEMO) {
+    const src = $('src');
+    src.className = 'tag hatch'; src.textContent = 'demo';
+    document.querySelector('.status .upd').textContent = 'fake server';
+    $('kick').insertAdjacentHTML('beforeend', '<span class="tag hatch">demo</span>');
+    $('chips').hidden = false;
+    $('chips').addEventListener('click', (e) => {
+      const c = e.target.closest('[data-c]');
+      if (!c) return;
+      input.value = c.dataset.c; check();
+    });
+  } else {
+    let saved = '';
+    try { saved = sessionStorage.getItem('mofo-link-code') || ''; } catch (e) { /* storage off */ }
+    if (norm(saved)) { input.value = norm(saved); check(); }
+  }
+
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · safety</title>
+<meta name="description" content="What the MOFO extension can and can't do, every server it talks to, and how to check all of it yourself.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: 'Archivo'; src: url('fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; }
+@font-face { font-family: 'Martian Mono'; src: url('fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; }
+:root { --navy: #0B091F; --lav: #EAEDFF; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--navy); color: var(--lav); font: 400 17px/1.6 'Archivo', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 820px; margin: 0 auto; padding: 56px 22px 90px; }
+a { color: var(--lav); text-underline-offset: 3px; }
+.top { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 48px; }
+.top img { width: 34px; height: 34px; outline: 1px solid var(--lav); }
+.top b { font-weight: 900; font-stretch: 125%; font-size: 22px; letter-spacing: -.02em; }
+h1 { font-weight: 900; font-stretch: 125%; font-size: clamp(44px, 9vw, 88px); line-height: .88; letter-spacing: -.03em; margin: 0 0 14px; text-transform: uppercase; }
+.date { font: 500 11px/1 'Martian Mono', monospace; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 40px; }
+h2 { font-weight: 900; font-stretch: 125%; font-size: 20px; letter-spacing: -.01em; text-transform: uppercase; margin: 44px 0 12px; padding-top: 18px; border-top: 1px solid var(--lav); }
+ul, ol { padding-left: 22px; } li { margin: 7px 0; }
+.lead { font-size: 21px; line-height: 1.5; }
+.lead b { background: var(--lav); color: var(--navy); padding: 0 5px; font-weight: 700; }
+.tbl { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 15px; }
+.tbl th { text-align: left; font: 600 10.5px/1.3 'Martian Mono', monospace; letter-spacing: .12em; text-transform: uppercase; background: var(--lav); color: var(--navy); padding: 9px 10px 7px; }
+.tbl td { vertical-align: top; padding: 10px; border-bottom: 1px solid rgba(234,237,255,.35); }
+.tbl td:first-child { font: 500 13px/1.45 'Martian Mono', monospace; word-break: break-word; width: 36%; }
+.wrap { overflow-x: auto; }
+code, .mono { font: 500 13.5px/1.5 'Martian Mono', monospace; }
+pre { font: 500 13px/1.6 'Martian Mono', monospace; background: rgba(234,237,255,.06); box-shadow: inset 0 0 0 1px rgba(234,237,255,.4); padding: 14px 16px; overflow-x: auto; white-space: pre; }
+.fp { display: block; font: 500 13px/1.5 'Martian Mono', monospace; word-break: break-all; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--lav); margin-top: 6px; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 4px; }
+.btns a { font: 700 12px/1 'Martian Mono', monospace; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; padding: 12px 15px 11px; box-shadow: inset 0 0 0 1.5px var(--lav); border-radius: 999px; }
+.btns a.solid { background: var(--lav); color: var(--navy); }
+.bounty { box-shadow: inset 0 0 0 2px var(--lav); padding: 18px 20px; margin-top: 14px; }
+.bounty b.big { display: block; font-weight: 900; font-stretch: 125%; font-size: 40px; line-height: 1; margin-bottom: 8px; }
+@media (max-width: 560px) { .tbl td:first-child { width: auto; } .tbl, .tbl tbody, .tbl tr, .tbl td { display: block; } .tbl tr:first-child { display: none; } .tbl td { border-bottom: 0; padding: 6px 0; } .tbl tr { border-bottom: 1px solid rgba(234,237,255,.35); padding: 8px 0; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="top" href="./"><img src="logo.svg" alt=""><b>MOFO</b></a>
+  <h1>Safety</h1>
+  <div class="date">MOFO extension · version 0.9.2 · 1 October 2026</div>
+
+  <p class="lead">MOFO only runs on fomo.family, has <b>no wallet code</b> and <b>can't place trades or sign anything</b>. Its code is public, and you can check in one minute that the version in the Chrome Web Store is exactly that code.</p>
+  <div class="btns">
+    <a class="solid" href="https://github.com/mindoverfomotools-blip/mofo-extension" target="_blank" rel="noopener">read the code</a>
+    <a href="#check">check it yourself</a>
+    <a href="#bounty">bug bounty</a>
+  </div>
+
+  <h2>What Chrome lets it do</h2>
+  <p>When you add MOFO, Chrome shows one permission: read and change your data on <span class="mono">fomo.family</span>. That's the whole list.</p>
+  <div class="wrap"><table class="tbl">
+    <tr><th>Permission</th><th>What it means</th></tr>
+    <tr><td>runs on fomo.family only</td><td>MOFO can't see any other website, other tabs, or other extensions like MetaMask, Phantom or any wallet.</td></tr>
+    <tr><td>storage</td><td>Saves your settings, rules and trade journal inside the extension, on your computer.</td></tr>
+  </table></div>
+  <p>No access to all websites, no tabs, cookies, clipboard or downloads. Chrome Web Store rules ban code loaded after review, so everything that runs is the published code.</p>
+
+  <h2>What it never does</h2>
+  <ul>
+    <li>It never clicks, types or submits anything on fomo.family. It reads the page and draws on top of it.</li>
+    <li>It has no wallet code: no wallet connection, no signing, no private keys or seed phrases.</li>
+    <li>It never sends your fomo.family session to MOFO's servers.</li>
+  </ul>
+
+  <h2>Every server it talks to</h2>
+  <div class="wrap"><table class="tbl">
+    <tr><th>Server</th><th>Why, and what it gets</th></tr>
+    <tr><td>mindoverfomo.tools</td><td>Downloads a small settings file with the addresses below. Sends nothing.</td></tr>
+    <tr><td>mofo-proxy.mofo-proxy.workers.dev</td><td>The free MOFO service: narrative, Ask MOFO and holder data. Gets the token or wallet address you look at; for Ask MOFO, your question with the chart snapshot, your open position and today's P&amp;L; and a random install id for the daily limits.</td></tr>
+    <tr><td>api.mindoverfomo.tools</td><td>THE CALL. Gets a random account id, your calls, and the name and fomo username if you set them.</td></tr>
+    <tr><td>api.geckoterminal.com</td><td>Public price history to grade your closed trades. Gets the token address.</td></tr>
+    <tr><td>prod-api.fomo.family</td><td>Trader stats on fomo profiles. Uses your fomo.family session, see below.</td></tr>
+  </table></div>
+  <p>Links to block explorers and X only open when you click them.</p>
+
+  <h2>Your fomo.family login</h2>
+  <p>fomo.family trades don't show up on-chain, so the trader card on a profile reads that trader's swap history from fomo.family's own API, the same request the fomo.family page makes. MOFO reuses the login the page itself sends for this. It stays in the open tab's memory, only ever goes back to fomo.family, and is never saved or sent to MOFO or anyone else. You can see this in the code: <span class="mono">src/net.js</span>, <span class="mono">NET.api</span>.</p>
+
+  <h2 id="check">Check it yourself</h2>
+  <ol>
+    <li><b>The permissions.</b> Open <span class="mono">chrome://extensions</span>, click Details on MOFO and look at Site access: only fomo.family.</li>
+    <li><b>The code is the store version.</b> In a terminal:
+<pre>git clone https://github.com/mindoverfomotools-blip/mofo-extension
+cd mofo-extension
+python3 verify.py</pre>
+      It downloads MOFO from Google's Chrome Web Store servers and compares every file with the public code. You should see <span class="mono">MATCH</span> and this fingerprint for 0.9.2:
+      <span class="fp">01f6cee3e6ea6bee2db55ef60636461737b5bfffc6c49d8f01a688246596502f</span>
+    </li>
+    <li><b>Where it connects.</b> Open <span class="mono">chrome://extensions</span>, turn on Developer mode, and under MOFO click <i>service worker</i>. In the window that opens, go to Network and use fomo.family normally: every request goes to the servers in the table above. The trader card's request to fomo.family shows in the fomo.family tab's own DevTools.</li>
+    <li><b>An outside view.</b> <a href="https://chrome-stats.com/d/ahljpbjjmfkdepihfgnpfkkehhbimdag" target="_blank" rel="noopener">Chrome-Stats</a> lists MOFO's permissions and lets you download the store package to inspect it yourself.</li>
+  </ol>
+  <p>Every version and its fingerprint is listed in <a href="https://github.com/mindoverfomotools-blip/mofo-extension/blob/main/RELEASES.md" target="_blank" rel="noopener">RELEASES.md</a>.</p>
+
+  <h2 id="bounty">Bug bounty</h2>
+  <div class="bounty">
+    <b class="big">up to $1,000</b>
+    For the first report of a way MOFO, or someone abusing MOFO, could move funds, start a trade, sign anything, leak wallet data or the fomo.family session, run code that isn't public, or act on any site other than fomo.family. Report it privately to <a href="mailto:mindoverfomotools@gmail.com?subject=SECURITY">mindoverfomotools@gmail.com</a> with SECURITY in the subject. Full rules in <a href="https://github.com/mindoverfomotools-blip/mofo-extension/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a>.
+  </div>
+
+  <h2>Contact</h2>
+  <p><a href="mailto:mindoverfomotools@gmail.com">mindoverfomotools@gmail.com</a> · <a href="support.html">support</a> · <a href="privacy.html">privacy</a> · <a href="terms.html">terms</a></p>
+  <p>MOFO is an independent tool and is not affiliated with or endorsed by fomo.family.</p>
+</main>
+</body>
+</html>

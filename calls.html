@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · the call</title>
+<meta name="description" content="THE CALL: every hot token on fomo is a call, buy or wait. settled 15 minutes later with the real price. best callers get paid in $MOFO every day.">
+<meta property="og:title" content="MOFO · THE CALL">
+<meta property="og:description" content="buy or wait. settled 15 minutes later with the real price. best callers get paid in $MOFO every day.">
+<meta property="og:image" content="og.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/MartianMono-var.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: 'Archivo'; src: url('fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+@font-face { font-family: 'Martian Mono'; src: url('fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; font-display: swap; }
+
+:root {
+  --navy: #0B091F;
+  --lav: #EAEDFF;
+  --dim: rgba(234, 237, 255, .42);
+  --pad: clamp(16px, 2.2vw, 44px);
+  --gap: clamp(16px, 1.6vw, 40px);
+  --mono: 'Martian Mono', ui-monospace, Menlo, monospace;
+  --sans: 'Archivo', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --cut: 12px;
+  --ease: cubic-bezier(.2, .7, .1, 1);
+}
+* { box-sizing: border-box; }
+html { background: var(--navy); scroll-behavior: smooth; }
+body { margin: 0; background: var(--navy); color: var(--lav); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; }
+::selection { background: var(--lav); color: var(--navy); }
+
+.mono { font-family: var(--mono); }
+.lab { font: 500 10px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- top bar */
+.bar {
+  position: sticky; top: 0; z-index: 30;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 12px var(--pad);
+  background: var(--navy);
+  border-bottom: 1px solid var(--lav);
+}
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; min-width: 0; }
+.brand img { width: 30px; height: 30px; outline: 1px solid var(--lav); display: block; flex: none; }
+.brand b { font-weight: 900; font-stretch: 125%; font-size: 20px; letter-spacing: -.02em; line-height: 1; }
+.brand span { font: 500 10px/1 var(--mono); letter-spacing: .14em; padding: 5px 7px 4px; border: 1px solid var(--lav); white-space: nowrap; }
+.nav { display: flex; gap: 2px; justify-content: center; min-width: 0; }
+.nav a { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-decoration: none; padding: 8px 10px 7px; border: 1px solid transparent; white-space: nowrap; }
+.nav a:hover { border-color: var(--lav); }
+.status { display: flex; align-items: center; gap: 10px; justify-content: flex-end; min-width: 0; }
+.status .upd { white-space: nowrap; }
+.tag { display: inline-flex; align-items: center; gap: 7px; font: 700 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 5px 7px 4px; border: 1px solid var(--lav); white-space: nowrap; }
+.tag.inv { background: var(--lav); color: var(--navy); }
+.tag.hatch { background: repeating-linear-gradient(-45deg, rgba(234,237,255,.22) 0 1px, transparent 1px 5px); }
+
+/* the logo's eyes, used as the live light */
+.eyes { display: inline-flex; gap: 2px; flex: none; }
+.eyes i { display: block; width: 4px; height: 10px; background: currentColor; transform: skewX(-18deg); animation: blink 4.2s infinite; }
+@keyframes blink { 0%, 92%, 100% { transform: skewX(-18deg) scaleY(1); } 95% { transform: skewX(-18deg) scaleY(.12); } }
+
+/* ---------------------------------------------------------------- hero */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: var(--gap) calc(var(--gap) * 2);
+  align-items: end;
+  padding: clamp(28px, 5vh, 72px) var(--pad) clamp(28px, 4vh, 56px);
+}
+.hero-t { min-width: 0; }
+.kick { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: clamp(14px, 2.4vh, 30px); }
+h1 {
+  --fs: clamp(84px, min(13.6vw, 30vh), 420px);
+  position: relative;
+  margin: 0;
+  font-weight: 900;
+  font-stretch: 125%;
+  font-size: var(--fs);
+  line-height: .84;
+  letter-spacing: -.045em;
+  text-transform: uppercase;
+  width: max-content;
+  max-width: 100%;
+}
+h1 span { display: block; }
+h1 .l2 { color: transparent; -webkit-text-stroke: max(1.5px, .012em) var(--lav); }
+/* the ball sits in the gap after THE and watches the board */
+h1 .l1 { display: flex; align-items: center; }
+.ball {
+  position: relative;
+  flex: none;
+  width: .8em;
+  height: .8em;
+  margin: -.06em 0 0 .08em;
+}
+.ball img { position: absolute; inset: 11%; width: 78%; height: 78%; object-fit: contain; display: block; animation: bob 5s var(--ease) infinite; }
+.ball svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ball .ring { transform-origin: 50px 50px; animation: spin 22s linear infinite; }
+.ball text { font: 600 5.6px var(--mono); letter-spacing: .075em; fill: var(--lav); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes bob { 50% { transform: translateY(-3%) rotate(-3deg); } }
+
+.hero-s { min-width: 0; display: grid; gap: 22px; padding-bottom: 4px; }
+.tix { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: clamp(0px, 2vh, 26px); }
+.tix:empty { display: none; }
+.tk { min-width: 0; border: 1px solid var(--lav); display: grid; grid-template-rows: auto 1fr auto; }
+.tk-h { display: flex; justify-content: space-between; gap: 10px; padding: 7px 10px 6px; background: var(--lav); color: var(--navy); font: 700 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.tk-h span:last-child { font-weight: 500; }
+.tk-b { display: flex; align-items: center; gap: 12px; padding: 14px 12px 6px; min-width: 0; }
+.tk-b b { font-weight: 900; font-stretch: 125%; font-size: clamp(30px, 2.6vw, 72px); line-height: .9; letter-spacing: -.035em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.tk-b .side { flex: none; }
+.tk-f { display: flex; align-items: center; gap: 8px; padding: 6px 12px 12px; font: 500 11px/1.2 var(--mono); min-width: 0; white-space: nowrap; }
+.tk-f .h { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.tk-f .res { flex: none; }
+.tk-pay { display: none; }
+.tk-b b.cd { font-family: var(--mono); font-weight: 700; font-stretch: 100%; letter-spacing: -.05em; }
+.lede { margin: 0; font-size: clamp(18px, 1.35vw, 30px); line-height: 1.3; font-weight: 500; letter-spacing: -.01em; max-width: 30ch; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.key {
+  display: inline-flex; align-items: center; gap: 12px;
+  min-height: 48px; padding: 0 22px 0 18px;
+  font: 800 15px/1 var(--sans); font-stretch: 118%; letter-spacing: -.01em;
+  text-decoration: none; text-transform: lowercase;
+  background: var(--lav); color: var(--navy);
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+  transition: transform .18s var(--ease);
+}
+.key:hover { transform: translateY(-2px); }
+.key.ghost { background: transparent; color: var(--lav); box-shadow: inset 0 0 0 1px var(--lav); clip-path: none; }
+.key .arr { font-family: var(--mono); font-weight: 700; }
+
+/* ---------------------------------------------------------------- totals strip */
+.strip {
+  margin: 0 var(--pad);
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--lav);
+  border: 1px solid var(--lav);
+}
+.strip > div { background: var(--navy); padding: clamp(12px, 1.2vw, 22px); min-width: 0; display: grid; gap: 10px; align-content: space-between; }
+.strip .v { font-weight: 900; font-stretch: 125%; font-size: clamp(22px, 2vw, 50px); line-height: .95; letter-spacing: -.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strip .v small { font: 600 .32em/1 var(--mono); letter-spacing: .06em; margin-left: .35em; vertical-align: .25em; }
+.strip .s { font: 500 9.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.strip .inv { background: var(--lav); color: var(--navy); }
+.strip .inv .s { color: rgba(11, 9, 31, .6); }
+
+/* ---------------------------------------------------------------- panels */
+main { padding: var(--gap) var(--pad) 0; }
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "today" "week" "calls" "pays" "how";
+  gap: var(--gap);
+}
+#today { grid-area: today; } #week { grid-area: week; } #calls { grid-area: calls; } #pays { grid-area: pays; } #how { grid-area: how; }
+.panel { min-width: 0; border: 1px solid var(--lav); position: relative; }
+.panel .lastv { border-bottom: 0; }
+.ph { display: flex; align-items: stretch; border-bottom: 1px solid var(--lav); min-width: 0; }
+.ph b { display: grid; place-items: center; padding: 0 10px; background: var(--lav); color: var(--navy); font: 700 10px/1 var(--mono); letter-spacing: .1em; }
+.ph span { flex: 1 1 auto; min-width: 0; padding: 11px 12px 10px; font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph em { font-style: normal; padding: 11px 12px 10px; border-left: 1px solid var(--lav); font: 500 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+
+/* the head of a leaderboard: the big name, the clock, the pot */
+.head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr); border-bottom: 1px solid var(--lav); }
+.head > div { min-width: 0; padding: clamp(14px, 1.3vw, 24px); display: grid; align-content: space-between; gap: 12px; }
+.head > div + div { border-left: 1px solid var(--lav); }
+.big { font-weight: 900; font-stretch: 125%; font-size: clamp(40px, 3.8vw, 96px); line-height: .82; letter-spacing: -.04em; text-transform: uppercase; white-space: nowrap; }
+.big sup { font: 700 .2em/1 var(--mono); letter-spacing: .1em; vertical-align: top; margin-left: .3em; }
+.clock { background: var(--lav); color: var(--navy); }
+.clock .lab { color: rgba(11, 9, 31, .65); }
+.cd { font: 700 clamp(24px, 2.1vw, 52px)/1 var(--mono); letter-spacing: -.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cd i { font-style: normal; font-size: .5em; letter-spacing: 0; margin: 0 .12em 0 .04em; vertical-align: .1em; }
+.pot .pv { font-weight: 900; font-stretch: 125%; font-size: clamp(24px, 2.1vw, 52px); line-height: .9; letter-spacing: -.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pot .pv small { display: block; font: 600 10px/1 var(--mono); letter-spacing: .12em; margin-top: 8px; }
+.note { margin: 0; padding: 12px clamp(14px, 1.3vw, 24px); font: 500 11px/1.55 var(--mono); letter-spacing: .02em; border-bottom: 1px solid var(--lav); }
+
+/* leaderboard rows */
+.lb { display: grid; }
+.lr {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, .55fr) minmax(0, .8fr);
+  align-items: center;
+  gap: 14px;
+  padding: 0 clamp(14px, 1.3vw, 24px);
+  min-height: 50px;
+  border-bottom: 1px solid rgba(234, 237, 255, .22);
+}
+.lr:last-child { border-bottom: 0; }
+.lr > * { min-width: 0; }
+.lr.th { min-height: 34px; border-bottom: 1px solid var(--lav); font: 500 9.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.lr .rk { font-weight: 900; font-stretch: 125%; font-size: 22px; letter-spacing: -.04em; line-height: 1; }
+.lr .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.lr .h { font-weight: 700; font-size: 16px; font-stretch: 108%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.lr .meta { display: none; }
+.lr .nm { display: grid; min-width: 0; }
+.lr .pts { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; }
+.lr .pts b { font: 700 15px/1 var(--mono); font-variant-numeric: tabular-nums; min-width: 3.2ch; text-align: right; }
+.lr .bar { height: 8px; border: 1px solid currentColor; position: relative; overflow: hidden; }
+.lr .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: currentColor; }
+.lr .c { font: 500 13px/1 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lr .c u { text-decoration: none; opacity: .55; margin-left: 6px; font-size: 11px; }
+.lr.first { background: var(--lav); color: var(--navy); border-bottom-color: var(--lav); min-height: 62px; }
+.lr.first .rk { font-size: 30px; }
+.lr.first .h { font-size: 19px; font-weight: 900; font-stretch: 125%; }
+.lr.ne { color: var(--dim); }
+.lr.ne.first { background: transparent; color: var(--dim); }
+.ne-t { flex: none; font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 4px 5px 3px; border: 1px dashed currentColor; white-space: nowrap; }
+.cut { display: flex; align-items: center; gap: 10px; padding: 7px clamp(14px, 1.3vw, 24px); font: 700 9px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; border-bottom: 1px solid rgba(234, 237, 255, .22); }
+.cut::before, .cut::after { content: ''; flex: 1 1 auto; height: 0; border-top: 1px dashed var(--lav); }
+.empty { padding: 26px clamp(14px, 1.3vw, 24px); font: 500 12px/1.5 var(--mono); color: var(--dim); }
+
+/* recent calls feed */
+.fr {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) minmax(0, 1.25fr) 54px minmax(0, 1fr) 38px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 clamp(14px, 1.3vw, 24px);
+  min-height: 46px;
+  border-bottom: 1px solid rgba(234, 237, 255, .22);
+}
+.fr:last-child { border-bottom: 0; }
+.fr > * { min-width: 0; }
+.fr.th { min-height: 34px; border-bottom: 1px solid var(--lav); font: 500 9.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.fr .t { font: 500 10.5px/1 var(--mono); color: var(--dim); white-space: nowrap; }
+.fr .h { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fr .tok { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.fr .tok b { font-weight: 900; font-stretch: 125%; font-size: 16px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fr .tok s { text-decoration: none; font: 500 9px/1 var(--mono); letter-spacing: .1em; color: var(--dim); flex: none; }
+.side { display: inline-grid; place-items: center; width: 52px; height: 22px; font: 700 10px/1 var(--mono); letter-spacing: .12em; }
+.side.buy { background: var(--lav); color: var(--navy); }
+.side.wait { box-shadow: inset 0 0 0 1px var(--lav); }
+.res { display: flex; align-items: center; gap: 8px; font: 500 12px/1 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 0; }
+.res i { font-style: normal; font: 700 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 4px 5px 3px; flex: none; }
+.res .right { background: var(--lav); color: var(--navy); }
+.res .wrong { box-shadow: inset 0 0 0 1px var(--lav); text-decoration: line-through; }
+.res .flat { border: 1px dotted var(--lav); color: var(--dim); }
+.fr .p { font: 700 14px/1 var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.fr .p.z { color: var(--dim); }
+.fr .tok .side { display: none; width: 44px; height: 18px; font-size: 9px; align-self: center; }
+
+/* payouts */
+.pr {
+  display: grid;
+  grid-template-columns: 84px 84px minmax(0, 1fr) minmax(0, .9fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: 12px;
+  padding: 11px clamp(14px, 1.3vw, 24px);
+  min-height: 46px;
+  border-bottom: 1px solid rgba(234, 237, 255, .22);
+}
+.pr:last-child { border-bottom: 0; }
+.pr > * { min-width: 0; }
+.pr.th { min-height: 34px; padding-top: 0; padding-bottom: 0; border-bottom: 1px solid var(--lav); font: 500 9.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.pr .t { font: 500 10.5px/1.3 var(--mono); }
+.pr .t small { display: block; color: var(--dim); font-size: 9.5px; margin-top: 3px; }
+.kind { display: inline-block; font: 700 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 4px 6px 3px; box-shadow: inset 0 0 0 1px var(--lav); white-space: nowrap; }
+.kind.daily { background: var(--lav); color: var(--navy); box-shadow: none; }
+.kind.burn { background: repeating-linear-gradient(-45deg, rgba(234,237,255,.35) 0 1px, transparent 1px 4px); }
+.pr .h { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr .h.x { font-weight: 500; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.pr .a { font: 700 14px/1 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr .a small { font-size: 9.5px; letter-spacing: .08em; margin-left: 5px; font-weight: 500; }
+.pr .tx { display: flex; align-items: center; gap: 8px; min-width: 0; justify-content: flex-end; }
+.pr .tx a { font: 500 11px/1 var(--mono); text-underline-offset: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.pr .tx span { font: 500 10px/1 var(--mono); color: var(--dim); letter-spacing: .08em; text-transform: uppercase; }
+.dry { flex: none; font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 4px 5px 3px; border: 1px dashed var(--lav); white-space: nowrap; }
+
+/* ---------------------------------------------------------------- how points work */
+.how { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+.how > div { min-width: 0; padding: clamp(16px, 1.6vw, 32px); }
+.how > div + div { border-left: 1px solid var(--lav); }
+.how h3 { margin: 0 0 16px; font-weight: 900; font-stretch: 125%; font-size: clamp(24px, 2vw, 46px); line-height: .92; letter-spacing: -.03em; text-transform: uppercase; }
+.how p { margin: 0; font-size: 15px; line-height: 1.5; max-width: 60ch; }
+.how p + p { margin-top: 10px; }
+.how .fine { font: 500 11px/1.6 var(--mono); color: var(--dim); letter-spacing: .02em; }
+
+.mx { display: grid; grid-template-columns: 70px repeat(3, minmax(0, 1fr)); border: 1px solid var(--lav); margin: 4px 0 18px; }
+.mx > div { min-width: 0; border-right: 1px solid var(--lav); border-bottom: 1px solid var(--lav); padding: 12px; display: grid; align-content: center; gap: 6px; }
+.mx > div:nth-child(4n) { border-right: 0; }
+.mx > div:nth-last-child(-n+4) { border-bottom: 0; }
+.mx .ch { font: 500 9.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.mx .rh { font: 700 11px/1 var(--mono); letter-spacing: .12em; }
+.mx .sc { font-weight: 900; font-stretch: 125%; font-size: clamp(30px, 2.6vw, 64px); line-height: .9; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.mx .sc + .ch { color: inherit; opacity: .7; }
+.mx .win { background: var(--lav); color: var(--navy); }
+.mx .zero { color: var(--dim); background: repeating-linear-gradient(-45deg, rgba(234,237,255,.1) 0 1px, transparent 1px 6px); }
+
+.split { display: grid; gap: 14px; margin: 4px 0 20px; }
+.split .row { display: grid; gap: 7px; }
+.split .row > .lab { color: var(--dim); }
+.sb { display: flex; border: 1px solid var(--lav); min-width: 0; }
+.sb > div { min-width: 0; padding: 10px 10px 9px; display: grid; gap: 6px; }
+.sb > div + div { border-left: 1px solid var(--lav); }
+.sb .pc { font-weight: 900; font-stretch: 125%; font-size: clamp(20px, 1.6vw, 36px); line-height: .9; letter-spacing: -.03em; }
+.sb .ln { font: 500 9.5px/1.25 var(--mono); letter-spacing: .08em; text-transform: uppercase; overflow-wrap: anywhere; }
+.sb .solid { background: var(--lav); color: var(--navy); }
+.sb .hatch { background: repeating-linear-gradient(-45deg, rgba(234,237,255,.26) 0 1px, transparent 1px 5px); }
+
+.req { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--lav); margin-bottom: 16px; }
+.req > div { min-width: 0; padding: 14px; display: grid; gap: 8px; align-content: space-between; }
+.req > div + div { border-left: 1px solid var(--lav); }
+.req .rv { font-weight: 900; font-stretch: 125%; font-size: clamp(26px, 2.2vw, 54px); line-height: .9; letter-spacing: -.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.req .rv small { font: 600 .3em/1 var(--mono); letter-spacing: .08em; margin-left: .3em; vertical-align: .3em; }
+.req .rl { font: 500 11px/1.45 var(--mono); }
+
+/* ---------------------------------------------------------------- footer */
+.foot {
+  margin: var(--gap) var(--pad) 0;
+  border-top: 1px solid var(--lav);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  padding: clamp(28px, 5vh, 64px) 0 clamp(28px, 4vh, 48px);
+}
+.foot h2 { margin: 0 0 14px; font-weight: 900; font-stretch: 125%; font-size: clamp(40px, 6vw, 170px); line-height: .84; letter-spacing: -.045em; text-transform: uppercase; }
+.foot p { margin: 0 0 20px; font-size: clamp(16px, 1.1vw, 22px); max-width: 44ch; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: flex-end; }
+.links a { font: 500 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-underline-offset: 4px; }
+
+/* ---------------------------------------------------------------- holder program: link your caller code */
+.hold {
+  margin: var(--gap) var(--pad) 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: stretch;
+  border: 1px solid var(--lav);
+  text-decoration: none;
+}
+.hold > * { min-width: 0; }
+.hold .hl { display: grid; place-items: center; padding: 0 clamp(12px, 1.1vw, 20px); background: repeating-linear-gradient(-45deg, rgba(234,237,255,.22) 0 1px, transparent 1px 5px); border-right: 1px solid var(--lav); font: 700 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+.hold .ht { padding: clamp(14px, 1.3vw, 24px); display: grid; gap: 8px; align-content: center; }
+.hold .ht b { font-weight: 900; font-stretch: 125%; font-size: clamp(24px, 2.4vw, 64px); line-height: .92; letter-spacing: -.03em; }
+.hold .ht span { font: 500 clamp(11px, .6vw, 15px)/1.55 var(--mono); letter-spacing: .02em; color: var(--dim); max-width: 80ch; }
+.hold .hk { display: flex; align-items: center; gap: 14px; padding: 0 clamp(18px, 1.8vw, 36px); background: var(--lav); color: var(--navy); font: 800 clamp(15px, 1vw, 20px)/1 var(--sans); font-stretch: 118%; letter-spacing: -.01em; white-space: nowrap; clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); }
+.hold .hk .arr { font-family: var(--mono); font-weight: 700; transition: transform .18s var(--ease); }
+.hold:hover .hk .arr { transform: translateX(4px); }
+.hold:hover .ht b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .12em; }
+
+/* ---------------------------------------------------------------- layouts */
+@media (min-width: 1100px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "today week" "calls pays" "how how"; }
+  /* the feed never sets the row height: it shows as many calls as fit next to its neighbour */
+  #calls { contain: size; min-height: 440px; overflow: hidden; }
+}
+@media (min-width: 2300px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "today week calls" "how how pays"; }
+  #pays { contain: size; min-height: 440px; overflow: hidden; }
+  .hero { grid-template-columns: auto minmax(0, 1fr); column-gap: 7vw; }
+  .tix { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tk-pay { display: grid; }
+}
+@media (max-width: 1400px) {
+  .strip { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .strip > div { grid-column: span 3; }
+  .strip > div:nth-child(-n+3) { grid-column: span 4; }
+}
+@media (max-width: 1100px) {
+  .nav { display: none; }
+  .bar { grid-template-columns: auto minmax(0, 1fr); }
+  .hero { grid-template-columns: minmax(0, 1fr); align-items: start; }
+}
+@media (max-width: 700px) {
+  .brand span { display: none; }
+  .status .upd { display: none; }
+  h1 { --fs: min(26vw, 150px); }
+  .hero-s { gap: 18px; }
+  .lede { font-size: 18px; }
+  .key { flex: 1 1 auto; justify-content: center; }
+  .tix { grid-template-columns: minmax(0, 1fr); margin: 0; }
+  .tk-lead { display: none; }
+
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .strip > div, .strip > div:nth-child(-n+3) { grid-column: auto; }
+  .strip > div:first-child { grid-column: 1 / -1; }
+  .strip .v { font-size: 26px; }
+  .strip > div:first-child .v { font-size: 40px; }
+
+  .head { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .head > div:first-child { grid-column: 1 / -1; }
+  .head > div + div { border-left: 0; }
+  .head > div:nth-child(2) { border-top: 1px solid var(--lav); }
+  .head > div:nth-child(3) { border-top: 1px solid var(--lav); border-left: 1px solid var(--lav); }
+  .big { font-size: 52px; }
+  .cd, .pot .pv { font-size: 24px; }
+
+  /* tables turn into stacked rows */
+  .lr.th, .fr.th, .pr.th { display: none; }
+  .lr { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; padding: 10px 14px; }
+  .lr .c, .lr .bar { display: none; }
+  .lr .pts { display: block; }
+  .lr .pts b { font-size: 17px; }
+  .lr .meta { display: block; font: 500 10px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; opacity: .7; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lr .who { flex-wrap: wrap; row-gap: 6px; }
+  .lr .who .nm { display: grid; min-width: 0; flex: 1 1 100%; }
+  .lr.first .rk { font-size: 26px; }
+
+  .fr { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "tok t p" "h res res"; gap: 9px 12px; padding: 12px 14px; }
+  .fr .res { justify-self: end; }
+  .fr .p { min-width: 28px; }
+  .fr .h { grid-area: h; } .fr .t { grid-area: t; text-align: right; } .fr .tok { grid-area: tok; }
+  .fr .sd { display: none; }
+  .fr .res { grid-area: res; } .fr .p { grid-area: p; }
+  .fr .tok .side { display: inline-grid; }
+
+  .pr { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "h a" "k tx" "t t"; gap: 8px 12px; padding: 12px 14px; }
+  .pr .t { grid-area: t; } .pr .k { grid-area: k; } .pr .h { grid-area: h; } .pr .a { grid-area: a; text-align: right; } .pr .tx { grid-area: tx; }
+  .pr .t { display: flex; gap: 8px; align-items: baseline; }
+  .pr .t small { margin: 0; }
+
+  .how { grid-template-columns: minmax(0, 1fr); }
+  .how > div + div { border-left: 0; border-top: 1px solid var(--lav); }
+  .mx { grid-template-columns: 52px repeat(3, minmax(0, 1fr)); }
+  .mx > div { padding: 10px 8px; }
+  .mx .sc { font-size: 30px; }
+  .req { grid-template-columns: minmax(0, 1fr); }
+  .req > div + div { border-left: 0; border-top: 1px solid var(--lav); }
+
+  .hold { grid-template-columns: minmax(0, 1fr); }
+  .hold .hl { writing-mode: horizontal-tb; transform: none; place-items: center start; padding: 8px 14px 7px; border-right: 0; border-bottom: 1px solid var(--lav); }
+  .hold .hk { min-height: 52px; justify-content: center; clip-path: none; border-top: 1px solid var(--lav); }
+  .foot { grid-template-columns: minmax(0, 1fr); }
+  .links { justify-content: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) { .ball .ring, .ball img, .eyes i { animation: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="./" aria-label="MOFO home"><img src="logo.svg" alt=""><b>MOFO</b><span>THE CALL</span></a>
+  <nav class="nav" aria-label="sections">
+    <a href="#today">today</a><a href="#week">this week</a><a href="#calls">calls</a><a href="#pays">payouts</a><a href="#how">how points work</a>
+  </nav>
+  <div class="status">
+    <span class="lab upd" id="upd">loading</span>
+    <span class="tag" id="src">loading</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-t">
+    <div class="kick" id="kick"><span class="tag">a mofo game</span></div>
+    <h1 aria-label="The Call">
+      <span class="l1">The<span class="ball" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <defs><path id="rp" d="M50,50 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+          <g class="ring"><text><textPath href="#rp">BUY OR WAIT · SETTLES IN 15 MIN · BUY OR WAIT · SETTLES IN 15 MIN · </textPath></text></g>
+        </svg>
+        <img src="ball.webp" alt="">
+      </span></span>
+      <span class="l2">Call</span>
+    </h1>
+  </div>
+  <div class="hero-s">
+    <div class="tix" id="tix"></div>
+    <p class="lede">every hot token on fomo is a call: buy or wait. 15 minutes later the real price settles it, and the best callers get paid in $MOFO every day.</p>
+    <div class="cta">
+      <a class="key" href="mofo-extension.zip" download>get the extension <span class="arr">↓</span></a>
+      <a class="key ghost" href="#how">how points work</a>
+    </div>
+  </div>
+</section>
+
+<section class="strip" id="totals" aria-label="totals"></section>
+
+<a class="hold" href="link.html">
+  <span class="hl">$mofo holders</span>
+  <span class="ht"><b>hold $MOFO? link your caller code</b><span>the holder program pays holders with good calls on this board. your caller code is in MOFO settings, under THE CALL. send a tiny exact amount of $MOFO from your wallet and it's linked. no wallet connect, nothing to sign.</span></span>
+  <span class="hk">link it <span class="arr">→</span></span>
+</a>
+
+<main>
+  <div class="grid">
+    <section class="panel" id="today" aria-label="today"></section>
+    <section class="panel" id="week" aria-label="this week"></section>
+    <section class="panel" id="calls" aria-label="recent calls"></section>
+    <section class="panel" id="pays" aria-label="recent payouts"></section>
+    <section class="panel" id="how" aria-label="how points work"></section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div>
+    <h2>Make<br>the call</h2>
+    <p>calls happen inside the extension while you're on fomo.family. install it, pick a handle and you're on the board. holding $MOFO? <a href="link.html">link your caller code</a> to get paid.</p>
+    <a class="key" href="mofo-extension.zip" download>get the extension <span class="arr">↓</span></a>
+  </div>
+  <nav class="links" aria-label="links">
+    <a href="./">mindoverfomo.tools</a>
+    <a href="privacy.html">privacy</a>
+    <a href="terms.html">terms</a>
+    <a href="program.html">program rules</a>
+    <a href="https://x.com/mindoverfomo" rel="noopener">x</a>
+    <a href="https://t.me/mindoverfomo" rel="noopener">telegram</a>
+  </nav>
+</footer>
+
+<script>
+(() => {
+  const FALLBACK = 'https://api.mindoverfomo.tools/game';
+  const EXPLORER = 'https://robinhoodchain.blockscout.com/tx/';
+  const qs = new URLSearchParams(location.search);
+  const forceDemo = qs.get('demo') === '1';
+  const $ = (id) => document.getElementById(id);
+
+  let data = null, isDemo = false, skew = 0, fetchedAt = 0, base = null;
+
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const now = () => Date.now() + skew;
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const num = (v) => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+  const minus = (n) => (n < 0 ? '−' : n > 0 ? '+' : '') + Math.abs(n);
+
+  // whole-token amounts: full digits up to a million, then 1.28M
+  function tok(v, compactFrom = 1e6) {
+    const n = num(v);
+    if (Math.abs(n) >= 1e9) return trim((n / 1e9).toFixed(2)) + 'B';
+    if (Math.abs(n) >= compactFrom) {
+      if (Math.abs(n) >= 1e6) return trim((n / 1e6).toFixed(2)) + 'M';
+      return trim((n / 1e3).toFixed(1)) + 'K';
+    }
+    if (Math.abs(n) >= 100) return Math.round(n).toLocaleString('en-US');
+    return trim(n.toFixed(n >= 10 ? 1 : 2));
+  }
+  function trim(s) { return s.indexOf('.') < 0 ? s : s.replace(/0+$/, '').replace(/\.$/, ''); }
+  function eth(v) { const n = num(v); return n >= 100 ? Math.round(n).toLocaleString('en-US') : trim(n.toFixed(n >= 1 ? 3 : 4)); }
+  function pct(f) { return Math.round(num(f) * 100) + '%'; }
+  function ago(ts) {
+    const s = Math.max(0, Math.round(now() / 1000 - ts));
+    if (s < 60) return s + 's ago';
+    if (s < 3600) return Math.floor(s / 60) + 'm ago';
+    if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+    return Math.floor(s / 86400) + 'd ago';
+  }
+  function clock(secs, withDays) {
+    secs = Math.max(0, Math.floor(secs));
+    const d = Math.floor(secs / 86400), h = Math.floor(secs % 86400 / 3600), m = Math.floor(secs % 3600 / 60), s = secs % 60;
+    if (withDays && d > 0) return d + '<i>D</i>' + pad2(h) + '<i>H</i>' + pad2(m) + '<i>M</i>';
+    return pad2(h + (withDays ? 0 : d * 24)) + '<i>:</i>' + pad2(m) + '<i>:</i>' + pad2(s);
+  }
+  function nextPayout(hour) {
+    const t = now(), d = new Date(t);
+    d.setUTCHours(hour, 0, 0, 0);
+    if (d.getTime() <= t) d.setUTCDate(d.getUTCDate() + 1);
+    return d.getTime() / 1000;
+  }
+  function utcTime(ts) { const d = new Date(ts * 1000); return pad2(d.getUTCHours()) + ':' + pad2(d.getUTCMinutes()) + ' utc'; }
+  const CHAIN = { solana: 'SOL', base: 'BASE', bnb: 'BNB', robinhood: 'HOOD' };
+
+  // ------------------------------------------------------------ demo data, so the page can be reviewed before the server is live
+  function demo() {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const hex = (n) => Array.from({ length: n }, () => '0123456789abcdef'[Math.floor(rnd() * 16)]).join('');
+    const t = Math.floor(Date.now() / 1000);
+    const hour = 18;
+    const end = Math.floor(nextPayout(hour));
+    const start = end - 86400;
+    const weekEnd = end + 3 * 86400;
+    const day = (h, p, c, r, e = true) => ({ handle: h, points: p, calls: c, right: r, eligible: e });
+    const dayTop = [
+      day('sol_wizard', 58, 16, 11), day('chartmonk', 46, 14, 10), day('anon-7k2q', 42, 12, 9, false), day('degen_mira', 38, 17, 11),
+      day('0x3f9a…c21e', 34, 11, 8), day('jeetfree', 30, 15, 9), day('late_again', 26, 9, 6), day('wen_mofo', 22, 13, 8, false),
+      day('pumpwatch', 20, 10, 6), day('bagholder', 16, 8, 5), day('rugsniffer', 14, 12, 7), day('fomo_saint', 12, 6, 4),
+      day('0xb71c…04ad', 8, 4, 3, false), day('anon-q9x1', 6, 7, 3),
+    ];
+    const weekTop = [
+      day('chartmonk', 212, 71, 44), day('sol_wizard', 204, 80, 47), day('degen_mira', 176, 88, 50), day('jeetfree', 150, 64, 37),
+      day('0x3f9a…c21e', 138, 52, 31), day('anon-7k2q', 131, 49, 30, false), day('pumpwatch', 118, 60, 34), day('late_again', 97, 41, 24),
+      day('bagholder', 86, 45, 25), day('fomo_saint', 72, 30, 18), day('rugsniffer', 64, 58, 30), day('wen_mofo', 51, 39, 21, false),
+    ];
+    const syms = ['SI', 'GOBLIN', 'HOODIE', 'CHILLGUY', 'BONKZ', 'MOODENG', 'PNUT2', 'GIGA', 'NOTHING', 'WOJAK', 'SPX', 'LOCKIN', 'BRETT', 'FWOG', 'RETARDIO', 'KEKIUS'];
+    const chains = ['solana', 'solana', 'solana', 'base', 'bnb', 'robinhood'];
+    const handles = ['sol_wizard', 'chartmonk', 'degen_mira', 'anon-7k2q', 'jeetfree', 'late_again', 'pumpwatch', '0x3f9a…c21e', 'bagholder', 'wen_mofo'];
+    const recent = [];
+    for (let i = 0; i < 26; i++) {
+      const side = rnd() < .5 ? 'buy' : 'wait';
+      const mv = Math.round(((rnd() - .58) * 34) * 10) / 10;
+      const flat = Math.abs(mv) < 2;
+      const up = mv > 0;
+      const right = !flat && (side === 'buy' ? up : !up);
+      const points = flat ? 0 : side === 'buy' ? (right ? 6 : -4) : (right ? 4 : -6);
+      recent.push({ handle: handles[Math.floor(rnd() * handles.length)], symbol: syms[i % syms.length], chain: chains[Math.floor(rnd() * chains.length)],
+        side, result: flat ? 'flat' : right ? 'right' : 'wrong', movePct: mv, points, settledAt: t - 20 - i * 95 - Math.floor(rnd() * 60) });
+    }
+    const prev = start;
+    const payouts = [
+      { at: prev, kind: 'treasury', day: 11, week: 2, handle: null, amount: '0.071', asset: 'ETH', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: 'chartmonk', amount: '18420.5', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: 'degen_mira', amount: '12610', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: 'sol_wizard', amount: '9480.2', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: 'pumpwatch', amount: '6120', asset: 'MOFO', tx: null, dryRun: false },
+      { at: prev, kind: 'burn', day: 11, week: 2, handle: null, amount: '14203.9', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: 'late_again', amount: '4930', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: '0x3f9a…c21e', amount: '3710.8', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev, kind: 'daily', day: 11, week: 2, handle: 'bagholder', amount: '2640', asset: 'MOFO', tx: '0x' + hex(64), dryRun: false },
+      { at: prev - 86400 * 4, kind: 'weekly', day: 7, week: 1, handle: 'sol_wizard', amount: '41900', asset: 'MOFO', tx: '0x' + hex(64), dryRun: true },
+      { at: prev - 86400 * 4, kind: 'daily', day: 7, week: 1, handle: 'jeetfree', amount: '15300', asset: 'MOFO', tx: null, dryRun: true },
+    ];
+    return {
+      ok: true, now: t, demo: true,
+      config: { token: '0x' + hex(40), tokenSymbol: 'MOFO', chainId: 4663, minHold: '10000', payoutHourUtc: hour,
+        points: { buyRight: 6, buyWrong: -4, waitRight: 4, waitWrong: -6, flatPct: 2 },
+        split: { treasury: 0.5, daily: 0.6, weekly: 0.2, burn: 0.2 }, minCalls: 5, winners: 10 },
+      day: { n: 12, start, end, potEstimateMofo: '48210.7', top: dayTop },
+      week: { n: 2, start: weekEnd - 7 * 86400, end: weekEnd, potMofo: '63840.2', top: weekTop },
+      totals: { feesEth: '0.84', treasuryEth: '0.42', boughtMofo: '1284500', paidMofo: '612300.4', burnedMofo: '256900', players: 311, calls: 5120 },
+      payouts, recent,
+    };
+  }
+
+  // ------------------------------------------------------------ render
+  function board(rows, winners) {
+    if (!rows || !rows.length) return '<div class="empty">no settled calls yet. the first right call takes the top spot.</div>';
+    const max = Math.max(1, ...rows.map((r) => num(r.points)));
+    let elig = 0, cutDone = false, out = '';
+    out += '<div class="lr th" role="row"><span>rank</span><span>caller</span><span>points</span><span>calls</span><span>right</span></div>';
+    rows.forEach((r, i) => {
+      const p = num(r.points), calls = num(r.calls), right = num(r.right);
+      const hit = calls ? Math.round(right / calls * 100) + '%' : '';
+      const ne = r.eligible === false;
+      const cls = ['lr', i === 0 ? 'first' : '', ne ? 'ne' : ''].join(' ');
+      out += '<div class="' + cls + '" role="row">' +
+        '<span class="rk">' + pad2(i + 1) + '</span>' +
+        '<span class="who"><span class="nm"><span class="h">' + esc(r.handle) + '</span>' +
+          '<span class="meta">' + calls + ' calls · ' + right + ' right' + (hit ? ' · ' + hit : '') + '</span></span>' +
+          (ne ? '<em class="ne-t">not eligible</em>' : '') + '</span>' +
+        '<span class="pts"><b>' + minus(p) + '</b><span class="bar"><i style="width:' + Math.max(0, p / max * 100).toFixed(1) + '%"></i></span></span>' +
+        '<span class="c">' + calls + '</span>' +
+        '<span class="c">' + right + (hit ? '<u>' + hit + '</u>' : '') + '</span>' +
+        '</div>';
+      if (!ne) elig++;
+      if (!cutDone && winners && elig === winners && i < rows.length - 1) { out += '<div class="cut">paid line · top ' + winners + ' eligible</div>'; cutDone = true; }
+    });
+    return '<div class="lb" role="table">' + out + '</div>';
+  }
+
+  function render() {
+    const d = data, c = d.config || {}, sym = '$' + (c.tokenSymbol || 'MOFO');
+    const hour = Number.isFinite(+c.payoutHourUtc) ? +c.payoutHourUtc : 18;
+    const winners = num(c.winners) || 10;
+    const sp = c.split || {}, pts = c.points || {};
+    const day = d.day || {}, week = d.week || {}, tot = d.totals || {};
+
+    // top bar + kicker
+    const src = $('src');
+    src.className = 'tag ' + (isDemo ? 'hatch' : 'inv');
+    src.innerHTML = isDemo ? 'demo data' : '<span class="eyes"><i></i><i></i></span>live';
+    $('kick').innerHTML = '<span class="tag">a mofo game</span>' +
+      (day.n ? '<span class="tag inv">day ' + esc(day.n) + '</span>' : '') +
+      (week.n ? '<span class="tag">week ' + esc(week.n) + '</span>' : '') +
+      (c.token ? '' : '<span class="tag hatch">$mofo not launched yet</span>');
+
+    // hero tickets: the latest settled call and who leads today
+    const last = (d.recent || [])[0];
+    const lead = (day.top || []).find((r) => r.eligible !== false);
+    const res = (r) => ['right', 'wrong', 'flat'].includes(r) ? r : 'flat';
+    const mvs = (m) => (m > 0 ? '+' : m < 0 ? '\u2212' : '') + Math.abs(m).toFixed(1) + '%';
+    $('tix').innerHTML =
+      (last ? '<div class="tk"><div class="tk-h"><span>last call</span><span data-ago="' + num(last.settledAt) + '">' + ago(num(last.settledAt)) + '</span></div>' +
+        '<div class="tk-b"><b>' + esc(last.symbol) + '</b><span class="side ' + (last.side === 'buy' ? 'buy' : 'wait') + '">' + (last.side === 'buy' ? 'BUY' : 'WAIT') + '</span></div>' +
+        '<div class="tk-f"><span class="h">' + esc(last.handle) + '</span><span class="res"><i class="' + res(last.result) + '">' + res(last.result) + '</i>' + mvs(num(last.movePct)) + '</span><b>' + minus(num(last.points)) + '</b></div></div>' : '') +
+      (lead ? '<div class="tk tk-lead"><div class="tk-h"><span>' + (d.practice ? 'leading today' : 'leading day ' + esc(day.n ?? '')) + '</span><span>' + minus(num(lead.points)) + ' pts</span></div>' +
+        '<div class="tk-b"><b>' + esc(lead.handle) + '</b></div>' +
+        '<div class="tk-f"><span>' + num(lead.calls) + ' calls · ' + num(lead.right) + ' right</span></div></div>' : '') +
+      '<div class="tk tk-pay"><div class="tk-h"><span>payout in</span><span>' + pad2(hour) + ':00 utc</span></div>' +
+        '<div class="tk-b"><b class="cd" data-cd="day">00:00:00</b></div>' +
+        '<div class="tk-f"><span>pot estimate ' + tok(day.potEstimateMofo) + ' ' + esc(sym) + '</span></div></div>';
+
+    // totals strip
+    $('totals').innerHTML =
+      '<div class="inv"><span class="s">fees in</span><span class="v">' + eth(tot.feesEth) + '<small>ETH</small></span></div>' +
+      '<div><span class="s">kept in treasury · ' + pct(sp.treasury ?? .5) + '</span><span class="v">' + eth(tot.treasuryEth) + '<small>ETH</small></span></div>' +
+      '<div><span class="s">' + esc(sym) + ' bought</span><span class="v">' + tok(tot.boughtMofo) + '</span></div>' +
+      '<div><span class="s">paid to callers</span><span class="v">' + tok(tot.paidMofo) + '</span></div>' +
+      '<div><span class="s">burned</span><span class="v">' + tok(tot.burnedMofo) + '</span></div>' +
+      '<div><span class="s">players</span><span class="v">' + num(tot.players).toLocaleString('en-US') + '</span></div>' +
+      '<div><span class="s">calls</span><span class="v">' + num(tot.calls).toLocaleString('en-US') + '</span></div>';
+
+    // today
+    $('today').innerHTML =
+      '<div class="ph"><b>01</b><span>today</span><em>payout ' + pad2(hour) + ':00 utc</em></div>' +
+      '<div class="head">' +
+        '<div><span class="lab">day</span><span class="big">' + esc(d.practice ? 'soon' : (day.n ?? '·')) + '</span></div>' +
+        '<div class="clock"><span class="lab">payout in</span><span class="cd" data-cd="day">00:00:00</span></div>' +
+        '<div class="pot"><span class="lab">pot estimate</span><span class="pv">' + tok(day.potEstimateMofo) + '<small>' + esc(sym) + '</small></span></div>' +
+      '</div>' +
+      '<p class="note">top ' + winners + ' eligible callers split ' + pct(sp.daily ?? .6) + ' of today\'s ' + esc(sym) + ' buy at ' + pad2(hour) + ':00 utc. the pot grows with every trade until then.</p>' +
+      board(day.top, winners);
+
+    // this week
+    $('week').innerHTML =
+      '<div class="ph"><b>02</b><span>this week</span><em>' + (week.end ? 'ends ' + new Date(week.end * 1000).toUTCString().slice(0, 11).toLowerCase() : '') + '</em></div>' +
+      '<div class="head">' +
+        '<div><span class="lab">week</span><span class="big">' + esc(d.practice ? 'soon' : (week.n ?? '·')) + '</span></div>' +
+        '<div class="clock"><span class="lab">week ends in</span><span class="cd" data-cd="week">0<i>D</i>00<i>H</i>00<i>M</i></span></div>' +
+        '<div class="pot"><span class="lab">week pot</span><span class="pv">' + tok(week.potMofo) + '<small>' + esc(sym) + '</small></span></div>' +
+      '</div>' +
+      '<p class="note">' + pct(sp.weekly ?? .2) + ' of every daily buy lands in the week pot. the top of week ' + esc(week.n ?? '') + ' takes it when the clock hits zero.</p>' +
+      board(week.top, 0);
+
+    // recent calls
+    const rc = d.recent || [];
+    $('calls').innerHTML =
+      '<div class="ph"><b>03</b><span>recent calls</span><em>settled after 15 min</em></div>' +
+      (rc.length ? '<div role="table">' +
+        '<div class="fr th" role="row"><span>when</span><span>caller</span><span>token</span><span>call</span><span>result</span><span style="text-align:right">pts</span></div>' +
+        rc.slice(0, 30).map((r) => {
+          const side = r.side === 'buy' ? 'buy' : 'wait';
+          const res = ['right', 'wrong', 'flat'].includes(r.result) ? r.result : 'flat';
+          const mv = num(r.movePct), p = num(r.points);
+          return '<div class="fr" role="row">' +
+            '<span class="t" data-ago="' + num(r.settledAt) + '">' + ago(num(r.settledAt)) + '</span>' +
+            '<span class="h">' + esc(r.handle) + '</span>' +
+            '<span class="tok"><b>' + esc(r.symbol) + '</b><s>' + esc(CHAIN[r.chain] || r.chain || '') + '</s><span class="side ' + side + '">' + side.toUpperCase() + '</span></span>' +
+            '<span class="sd"><span class="side ' + side + '">' + side.toUpperCase() + '</span></span>' +
+            '<span class="res"><i class="' + res + '">' + res + '</i>' + (mv > 0 ? '+' : mv < 0 ? '−' : '') + Math.abs(mv).toFixed(1) + '%</span>' +
+            '<span class="p' + (p === 0 ? ' z' : '') + '">' + minus(p) + '</span>' +
+            '</div>';
+        }).join('') + '</div>'
+      : '<div class="empty">nothing settled yet. calls show up here 15 minutes after they\'re made.</div>');
+
+    // payouts
+    const po = d.payouts || [];
+    const who = (p) => p.handle ? '<span class="h">' + esc(p.handle) + '</span>'
+      : '<span class="h x">' + (p.kind === 'burn' ? 'burn address' : p.kind === 'treasury' ? 'treasury' : 'unclaimed') + '</span>';
+    $('pays').innerHTML =
+      '<div class="ph"><b>04</b><span>recent payouts</span><em>robinhood chain</em></div>' +
+      (po.length ? '<div role="table">' +
+        '<div class="pr th" role="row"><span>when</span><span>kind</span><span>to</span><span>amount</span><span style="text-align:right">tx</span></div>' +
+        po.slice(0, 20).map((p) => {
+          const kind = ['daily', 'weekly', 'burn', 'treasury'].includes(p.kind) ? p.kind : 'daily';
+          const okTx = typeof p.tx === 'string' && /^0x[0-9a-fA-F]{64}$/.test(p.tx);
+          const when = kind === 'weekly' ? 'week ' + esc(p.week ?? '') : 'day ' + esc(p.day ?? '');
+          return '<div class="pr" role="row">' +
+            '<span class="t">' + when + '<small data-ago="' + num(p.at) + '">' + ago(num(p.at)) + '</small></span>' +
+            '<span class="k"><span class="kind ' + kind + '">' + kind + '</span></span>' +
+            who(p) +
+            '<span class="a">' + (p.asset === 'ETH' ? eth(p.amount) : tok(p.amount)) + '<small>' + esc(p.asset || 'MOFO') + '</small></span>' +
+            '<span class="tx">' + (p.dryRun ? '<em class="dry">dry run</em>' : '') +
+              (okTx ? '<a href="' + EXPLORER + p.tx + '" target="_blank" rel="noopener">' + p.tx.slice(0, 6) + '…' + p.tx.slice(-4) + ' ↗</a>' : '<span>' + (p.dryRun ? 'no tx' : 'pending') + '</span>') +
+            '</span>' +
+            '</div>';
+        }).join('') + '</div>'
+      : '<div class="empty">no payouts yet. the first one goes out at ' + pad2(hour) + ':00 utc.</div>');
+
+    // how points work
+    const fp = num(pts.flatPct ?? 2);
+    const cell = (v, label, win) => '<div class="' + (win ? 'win' : v === 0 ? 'zero' : '') + '"><span class="sc">' + minus(v) + '</span><span class="ch">' + label + '</span></div>';
+    const tr = num(sp.treasury ?? .5), buy = 1 - tr;
+    $('how').innerHTML =
+      '<div class="ph"><b>05</b><span>how points work</span><em>' + esc(sym) + '</em></div>' +
+      '<div class="how">' +
+        '<div>' +
+          '<h3>Buy or wait</h3>' +
+          '<p>a token you\'re looking at on fomo turns hot or extreme and mofo asks for your call. buy means you think it goes higher, wait means you think it cools off. nothing gets traded. the server locks the price when you call and checks it again 15 minutes later.</p>' +
+          '<div class="mx" style="margin-top:20px">' +
+            '<div></div>' +
+            '<div><span class="ch">up ' + fp + '%+</span></div>' +
+            '<div><span class="ch">under ' + fp + '%</span></div>' +
+            '<div><span class="ch">down ' + fp + '%+</span></div>' +
+            '<div><span class="rh">BUY</span></div>' + cell(num(pts.buyRight ?? 6), 'right', true) + cell(0, 'flat') + cell(num(pts.buyWrong ?? -4), 'wrong') +
+            '<div><span class="rh">WAIT</span></div>' + cell(num(pts.waitWrong ?? -6), 'wrong') + cell(0, 'flat') + cell(num(pts.waitRight ?? 4), 'right', true) +
+          '</div>' +
+          '<p class="fine">why it\'s lopsided: we measured 15,095 trending tokens, and when they moved more than 2% in 15 minutes only 39% went up. so spamming buy or spamming wait lands you around zero. you have to actually read the chart.</p>' +
+        '</div>' +
+        '<div>' +
+          '<h3>Where the fees go</h3>' +
+          '<div class="split">' +
+            '<div class="row"><span class="lab">every day at ' + pad2(hour) + ':00 utc, the day\'s trading fees</span>' +
+              '<div class="sb"><div class="hatch" style="flex:' + tr + ' 1 0"><span class="pc">' + pct(tr) + '</span><span class="ln">kept in treasury</span></div>' +
+              '<div class="solid" style="flex:' + buy + ' 1 0"><span class="pc">' + pct(buy) + '</span><span class="ln">buys ' + esc(sym) + '</span></div></div></div>' +
+            '<div class="row"><span class="lab">then the ' + esc(sym) + ' it bought</span>' +
+              '<div class="sb"><div class="solid" style="flex:' + num(sp.daily ?? .6) + ' 1 0"><span class="pc">' + pct(sp.daily ?? .6) + '</span><span class="ln">today\'s top callers</span></div>' +
+              '<div style="flex:' + num(sp.weekly ?? .2) + ' 1 0"><span class="pc">' + pct(sp.weekly ?? .2) + '</span><span class="ln">week pot</span></div>' +
+              '<div class="hatch" style="flex:' + num(sp.burn ?? .2) + ' 1 0"><span class="pc">' + pct(sp.burn ?? .2) + '</span><span class="ln">burned</span></div></div></div>' +
+          '</div>' +
+          '<span class="lab" style="display:block;margin-bottom:8px;color:var(--dim)">to win you need</span>' +
+          '<div class="req">' +
+            '<div><span class="rv">' + tok(c.minHold ?? 10000, 1e9) + '<small>' + esc(sym) + '</small></span><span class="rl">held in a wallet linked to your caller code</span></div>' +
+            '<div><span class="rv">' + esc(c.minCalls ?? 5) + '<small>calls</small></span><span class="rl">settled that day, so one lucky call can\'t take the pot</span></div>' +
+          '</div>' +
+          '<p class="fine">you link a wallet on <a href="link.html">the link page</a> by sending a tiny exact amount of ' + esc(sym) + ' the server can spot. max 20 calls a day, 3 per token, and only tokens with $25k+ liquidity count.</p>' +
+        '</div>' +
+      '</div>';
+
+    tick();
+    fit();
+  }
+
+  // the feeds show whole rows only: in the wide layouts a panel is as tall as its neighbour and drops rows that don't fit
+  function fit() {
+    const wide = matchMedia('(min-width: 1100px)').matches;
+    [['calls', '.fr:not(.th)', 8], ['pays', '.pr:not(.th)', 10]].forEach(([id, sel, cap]) => {
+      const panel = $(id);
+      const rows = Array.from(panel.querySelectorAll(sel));
+      rows.forEach((r) => { r.style.display = ''; r.classList.remove('lastv'); });
+      const contained = /size/.test(getComputedStyle(panel).contain);
+      const bottom = panel.getBoundingClientRect().bottom - 1;
+      let shown = 0, over = false;
+      rows.forEach((r) => {
+        if (!over && (contained ? r.getBoundingClientRect().bottom <= bottom : (wide || shown < cap))) shown++;
+        else { over = true; r.style.display = 'none'; }
+      });
+      if (shown) rows[shown - 1].classList.add('lastv');
+    });
+  }
+  let rz;
+  addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => data && fit(), 120); });
+
+  function tick() {
+    if (!data) return;
+    const c = data.config || {};
+    const hour = Number.isFinite(+c.payoutHourUtc) ? +c.payoutHourUtc : 18;
+    const t = now() / 1000;
+    document.querySelectorAll('[data-cd="day"]').forEach((el) => { el.innerHTML = clock(nextPayout(hour) - t, false); });
+    const wEl = document.querySelector('[data-cd="week"]');
+    if (wEl) {
+      const left = (data.week && data.week.end) ? data.week.end - t : 0;
+      wEl.innerHTML = left > 86400 ? clock(left, true) : clock(left, false);
+    }
+    document.querySelectorAll('[data-ago]').forEach((el) => { el.textContent = ago(+el.dataset.ago); });
+    const s = Math.round((Date.now() - fetchedAt) / 1000);
+    $('upd').textContent = isDemo ? 'sample numbers' : 'updated ' + (s < 2 ? 'just now' : s + 's ago');
+  }
+
+  async function apiBase() {
+    if (base) return base;
+    try {
+      const r = await fetch('ext-config.json', { cache: 'no-store' });
+      const j = await r.json();
+      if (j && typeof j.game === 'string' && /^https:\/\//.test(j.game)) base = j.game.replace(/\/+$/, '');
+    } catch (e) { /* no config yet */ }
+    return base || FALLBACK;
+  }
+
+  async function load() {
+    if (forceDemo) { useDemo(); return; }
+    try {
+      const ctl = new AbortController();
+      const to = setTimeout(() => ctl.abort(), 9000);
+      const r = await fetch((await apiBase()) + '/v1/board', { signal: ctl.signal, cache: 'no-store' });
+      clearTimeout(to);
+      const j = await r.json();
+      if (!j || !j.ok) throw new Error((j && j.error) || 'bad response');
+      data = j; isDemo = false; fetchedAt = Date.now();
+      skew = j.now ? j.now * 1000 - Date.now() : 0;
+      render();
+    } catch (e) {
+      if (!data || isDemo) useDemo();
+      // a live board that fails one refresh keeps its last numbers
+    }
+  }
+  function useDemo() { data = demo(); isDemo = true; skew = 0; fetchedAt = Date.now(); render(); }
+
+  load();
+  setInterval(load, 30000);
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · privacy</title>
+<meta name="description" content="What the MOFO extension and the MOFO service collect, and what they don't.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: 'Archivo'; src: url('fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; }
+@font-face { font-family: 'Martian Mono'; src: url('fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; }
+:root { --navy: #0B091F; --lav: #EAEDFF; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--navy); color: var(--lav); font: 400 17px/1.6 'Archivo', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 760px; margin: 0 auto; padding: 56px 22px 90px; }
+a { color: var(--lav); text-underline-offset: 3px; }
+.top { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 48px; }
+.top img { width: 34px; height: 34px; outline: 1px solid var(--lav); }
+.top b { font-weight: 900; font-stretch: 125%; font-size: 22px; letter-spacing: -.02em; }
+h1 { font-weight: 900; font-stretch: 125%; font-size: clamp(44px, 9vw, 88px); line-height: .88; letter-spacing: -.03em; margin: 0 0 14px; text-transform: uppercase; }
+.date { font: 500 11px/1 'Martian Mono', monospace; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 40px; }
+h2 { font-weight: 900; font-stretch: 125%; font-size: 20px; letter-spacing: -.01em; text-transform: uppercase; margin: 40px 0 10px; padding-top: 18px; border-top: 1px solid var(--lav); }
+ul { padding-left: 20px; } li { margin: 6px 0; }
+</style>
+</head>
+<body>
+<main>
+  <a class="top" href="./"><img src="logo.svg" alt=""><b>MOFO</b></a>
+  <h1>Privacy</h1>
+  <div class="date">MOFO extension and service · 1 October 2026</div>
+
+  <p>MOFO is a Chrome extension for fomo.family. This page says what it reads, what leaves your browser and what doesn't.</p>
+
+  <h2>What stays in your browser</h2>
+  <ul>
+    <li>The chart analysis, the entry check, the token risk checks, your rules and the drawings on the chart are computed in your browser.</li>
+    <li>MOFO reads the fomo.family page you have open (the chart, the token stats, your open position and closed trades) to do that. It never clicks, trades or signs anything, and it has no access to your wallet.</li>
+    <li>On a trader's profile, MOFO asks fomo.family's own API for that trader's swap history, the same request the fomo.family page makes, using your logged-in fomo.family session. That request goes only to fomo.family. Your session is kept in the open tab's memory for this and is never stored or sent anywhere else.</li>
+    <li>Your settings, your trading notes, your trade journal, the holder log and snapshots of fomo's Trending list are stored in the extension's own storage in this browser. They never leave it.</li>
+  </ul>
+
+  <h2>What goes to the MOFO service</h2>
+  <p>Only when you use a feature that needs it, and only what that feature needs:</p>
+  <ul>
+    <li><b>Narrative rundown:</b> the token's chain, contract address, name, ticker, its links and age.</li>
+    <li><b>Chat:</b> your question, the recent messages of that chat, and a snapshot of the token on screen (chart levels, candles, flow, holders, your position and rules, and your trading notes if you wrote any).</li>
+    <li><b>Holder profiles:</b> the token address or the wallet address being looked up.</li>
+    <li>A random install id, created when you install MOFO, so the daily free limits work. It isn't linked to your name, wallet or accounts.</li>
+  </ul>
+  <p>The service passes these to Anthropic (Claude, which writes the rundown and the chat answers), twitterapi.io (searches public posts on X) and a holder-data provider (token holders and wallet trading stats; it receives the token or wallet address being looked up). Rundowns and holder lookups are cached for up to 30 minutes so the same token isn't looked up twice. Daily usage counters are kept for three days. MOFO doesn't sell data, show ads or track you across sites.</p>
+
+  <h2>THE CALL</h2>
+  <ul>
+    <li>When you make a call, the MOFO service gets the token's chain and address, your call (buy or wait) and the entry heat. It records the price at that moment and 15 minutes later, and keeps the result.</li>
+    <li>A caller profile is made the first time you use THE CALL: a random id and secret kept in this browser, and a private caller code. If you set a name and a fomo.family username, they are shown publicly on the caller board next to your results. Without a name you show up as anon.</li>
+    <li>Linking a wallet happens on mindoverfomo.tools, outside the extension. If you link one there, the service stores its public address and reads its public token balance. The extension itself never asks for or touches a wallet.</li>
+  </ul>
+
+  <h2>Your own keys</h2>
+  <p>If you add your own API keys in the settings, MOFO calls Claude, twitterapi.io and the holder-data provider directly with them and the MOFO service isn't used. The keys stay in this browser's extension storage; the fomo.family page can't read them.</p>
+
+  <h2>Other requests</h2>
+  <p>MOFO reads a small settings file from mindoverfomo.tools to find the service, and asks GeckoTerminal for public price history when grading your journal.</p>
+
+  <h2>How long we keep it, and deleting it</h2>
+  <ul>
+    <li>Rundowns and holder lookups: cached for up to 30 minutes. Daily usage counters: 3 days.</li>
+    <li>THE CALL: your calls, results, profile and a linked wallet address are kept while the game runs, so the board and your track record work.</li>
+    <li>To delete your THE CALL data, email us your caller code (MOFO settings, THE CALL section) and we remove it within 30 days. Removing the extension deletes everything stored in your browser.</li>
+  </ul>
+
+  <h2>Chrome Web Store user data policy</h2>
+  <p>The use of information received from the extension adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements. Data is used only to provide the features described on this page. It is never sold, never used for advertising or credit decisions, and never read by people except to fix a problem you report or when the law requires it.</p>
+
+  <h2>Contact</h2>
+  <p><a href="mailto:mindoverfomotools@gmail.com">mindoverfomotools@gmail.com</a> · <a href="https://x.com/mindoverfomo">x.com/mindoverfomo</a> · <a href="https://t.me/mindoverfomo">t.me/mindoverfomo</a></p>
+  <p>MOFO is an independent tool and is not affiliated with or endorsed by fomo.family. See also the <a href="terms.html">terms</a>.</p>
+</main>
+</body>
+</html>

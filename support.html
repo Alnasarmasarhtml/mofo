@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOFO · support</title>
+<meta name="description" content="Help with the MOFO extension for fomo.family.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: 'Archivo'; src: url('fonts/Archivo-var.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; }
+@font-face { font-family: 'Martian Mono'; src: url('fonts/MartianMono-var.woff2') format('woff2'); font-weight: 100 800; font-stretch: 75% 112.5%; }
+:root { --navy: #0B091F; --lav: #EAEDFF; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--navy); color: var(--lav); font: 400 17px/1.6 'Archivo', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 760px; margin: 0 auto; padding: 56px 22px 90px; }
+a { color: var(--lav); text-underline-offset: 3px; }
+.top { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-bottom: 48px; }
+.top img { width: 34px; height: 34px; outline: 1px solid var(--lav); }
+.top b { font-weight: 900; font-stretch: 125%; font-size: 22px; letter-spacing: -.02em; }
+h1 { font-weight: 900; font-stretch: 125%; font-size: clamp(44px, 9vw, 88px); line-height: .88; letter-spacing: -.03em; margin: 0 0 14px; text-transform: uppercase; }
+.date { font: 500 11px/1 'Martian Mono', monospace; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 40px; }
+h2 { font-weight: 900; font-stretch: 125%; font-size: 20px; letter-spacing: -.01em; text-transform: uppercase; margin: 40px 0 10px; padding-top: 18px; border-top: 1px solid var(--lav); }
+ul { padding-left: 20px; } li { margin: 6px 0; }
+</style>
+</head>
+<body>
+<main>
+  <a class="top" href="./"><img src="logo.svg" alt=""><b>MOFO</b></a>
+  <h1>Support</h1>
+  <div class="date">MOFO extension · help</div>
+
+  <p>Something broken or confusing? Email <a href="mailto:mindoverfomotools@gmail.com">mindoverfomotools@gmail.com</a> and we'll get back to you, usually within a day or two. Tell us your browser, the token page you were on and what you saw. A screenshot helps a lot.</p>
+
+  <h2>Quick fixes</h2>
+  <ul>
+    <li><b>The panel doesn't show up.</b> MOFO only runs on fomo.family token pages. Reload the tab once after installing or updating the extension, and make sure you're logged in to fomo.family.</li>
+    <li><b>Holder data says "retry in a few seconds".</b> The holder data source limits how fast it can be asked. MOFO waits and tries again by itself.</li>
+    <li><b>"Daily limit reached".</b> The free service has a daily limit per install for Ask MOFO and holder data. It resets every day.</li>
+    <li><b>The chart colors look wrong.</b> Pick black and white, green and red or fomo's own colors in MOFO settings (click the MOFO toolbar icon).</li>
+    <li><b>Want to see how it works first?</b> Open MOFO settings and click "See a demo on sample data".</li>
+  </ul>
+
+  <h2>Your data</h2>
+  <p>Everything MOFO saves stays in your browser, and removing the extension deletes it. To delete your THE CALL data from our server, email us your caller code (MOFO settings, THE CALL section). Details are in the <a href="privacy.html">privacy policy</a>.</p>
+
+  <h2>Contact</h2>
+  <p><a href="mailto:mindoverfomotools@gmail.com">mindoverfomotools@gmail.com</a> · <a href="safety.html">safety</a> · <a href="privacy.html">privacy</a> · <a href="terms.html">terms</a></p>
+  <p>MOFO is an independent tool and is not affiliated with or endorsed by fomo.family.</p>
+</main>
+</body>
+</html>

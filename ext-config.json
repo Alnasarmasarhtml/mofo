@@ -1,0 +1,5 @@
+{
+  "v": 1,
+  "proxy": "https://mofo-proxy.mofo-proxy.workers.dev",
+  "game": "https://api.mindoverfomo.tools/game"
+}
